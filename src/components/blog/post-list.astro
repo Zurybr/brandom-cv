@@ -1,0 +1,30 @@
+---
+import PostCard from '@/components/blog/post-card.astro'
+
+interface Props {
+  posts: Array<{
+    slug: string
+    title: string
+    date: string
+    category?: string
+    excerpt: string
+    readingTime: string
+  }>
+}
+
+const { posts } = Astro.props
+---
+
+{
+  posts.length === 0 ? (
+    <p class="py-12 text-center text-muted-foreground">
+      Aún no hay publicaciones.
+    </p>
+  ) : (
+    <div class="grid gap-6 sm:grid-cols-2">
+      {posts.map((post) => (
+        <PostCard {...post} />
+      ))}
+    </div>
+  )
+}

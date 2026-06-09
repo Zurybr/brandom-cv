@@ -1,0 +1,37 @@
+---
+import Card from '@/components/ui/card.astro'
+import Badge from '@/components/ui/badge.astro'
+
+interface Props {
+  slug: string
+  title: string
+  date: string
+  category?: string
+  excerpt: string
+  readingTime: string
+}
+
+const { slug, title, date, category, excerpt, readingTime } = Astro.props
+
+const formattedDate = new Date(date).toLocaleDateString('es-MX', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+})
+---
+
+<a href={`/blog/${slug}`} class="block">
+  <Card className="h-full transition-colors hover:border-primary">
+    <div class="flex items-center gap-3 text-sm text-muted-foreground">
+      <time datetime={date}>{formattedDate}</time>
+      {category && <Badge text={category} />}
+    </div>
+    <h3 class="mt-2 text-xl font-semibold text-foreground">
+      {title}
+    </h3>
+    <p class="mt-2 leading-relaxed text-muted-foreground">
+      {excerpt}
+    </p>
+    <p class="mt-3 text-sm text-primary">{readingTime}</p>
+  </Card>
+</a>

@@ -1,0 +1,122 @@
+---
+const navLinks = [
+  { href: '/', label: 'Inicio' },
+  { href: '/blog', label: 'Blog' },
+]
+
+const currentPath = Astro.url.pathname
+---
+
+<header
+  class="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur"
+>
+  <nav
+    class="mx-auto flex max-w-5xl items-center justify-between px-4 py-3"
+    aria-label="Navegación principal"
+  >
+    <a
+      href="/"
+      class="text-lg font-bold text-foreground transition-colors hover:text-primary"
+    >
+      BL
+    </a>
+
+    <div class="hidden gap-6 sm:flex">
+      {
+        navLinks.map((link) => (
+          <a
+            href={link.href}
+            class:list={[
+              'text-sm font-medium transition-colors hover:text-primary',
+              currentPath === link.href
+                ? 'text-primary'
+                : 'text-muted-foreground',
+            ]}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </div>
+
+    <button
+      type="button"
+      id="menu-toggle"
+      class="sm:hidden"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      aria-label="Abrir menú"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <line x1="4" x2="20" y1="12" y2="12"></line>
+        <line x1="4" x2="20" y1="6" y2="6"></line>
+        <line x1="4" x2="20" y1="18" y2="18"></line>
+      </svg>
+    </button>
+  </nav>
+
+  <div id="mobile-menu" class="border-t border-border sm:hidden hidden">
+    {
+      navLinks.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            'block px-4 py-3 text-sm font-medium transition-colors hover:text-primary',
+            currentPath === link.href
+              ? 'text-primary'
+              : 'text-muted-foreground',
+          ]}
+        >
+          {link.label}
+        </a>
+      ))
+    }
+  </div>
+</header>
+
+<script is:inline>
+  const toggle = document.getElementById('menu-toggle')
+  const menu = document.getElementById('mobile-menu')
+
+  function setMenuOpen(open) {
+    if (!toggle || !menu) return
+    menu.classList.toggle('hidden', !open)
+    toggle.setAttribute('aria-expanded', String(open))
+    toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú')
+    toggle.querySelector('svg').innerHTML = open
+      ? '<path d="M18 6 6 18M6 6l12 12"></path>'
+      : '<line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line>'
+    if (open) {
+      const firstLink = menu.querySelector('a')
+      firstLink && firstLink.focus()
+    }
+  }
+
+  toggle &&
+    toggle.addEventListener('click', () => {
+      const isOpen = toggle.getAttribute('aria-expanded') === 'true'
+      setMenuOpen(!isOpen)
+    })
+
+  document.addEventListener('keydown', (e) => {
+    if (
+      e.key === 'Escape' &&
+      toggle &&
+      toggle.getAttribute('aria-expanded') === 'true'
+    ) {
+      setMenuOpen(false)
+      toggle.focus()
+    }
+  })
+</script>

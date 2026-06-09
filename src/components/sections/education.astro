@@ -1,0 +1,35 @@
+---
+import type { Education } from '@/types'
+import SectionHeading from '@/components/ui/section-heading.astro'
+import Card from '@/components/ui/card.astro'
+
+interface Props {
+  education: Education[]
+}
+
+const { education } = Astro.props
+---
+
+<section id="education" class="py-16">
+  <SectionHeading title="Educación" />
+  <div class="mx-auto max-w-3xl space-y-6">
+    {
+      education.map((edu, i) => (
+        <div data-animate="fade-up" style={`animation-delay: ${i * 150}ms`}>
+          <Card>
+            <h3 class="text-xl font-semibold text-foreground">
+              {edu.institution}
+            </h3>
+            <p class="mt-1 text-primary">{edu.degree}</p>
+            <p class="mt-1 text-sm text-muted-foreground">{edu.period}</p>
+            {edu.description && (
+              <p class="mt-3 leading-relaxed text-muted-foreground">
+                {edu.description}
+              </p>
+            )}
+          </Card>
+        </div>
+      ))
+    }
+  </div>
+</section>

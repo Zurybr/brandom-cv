@@ -1,0 +1,41 @@
+---
+import type { SocialLink } from '@/types'
+import SectionHeading from '@/components/ui/section-heading.astro'
+import IconLink from '@/components/ui/icon-link.astro'
+
+interface Props {
+  socialLinks: SocialLink[]
+  email: string
+}
+
+const { socialLinks, email } = Astro.props
+---
+
+<section id="contact" class="py-16">
+  <SectionHeading title="Contacto" subtitle="Conectemos" />
+  <div data-animate="fade-up" class="mx-auto max-w-3xl text-center">
+    <p class="mb-6 text-muted-foreground">
+      ¿Interesado en colaborar? No dudes en contactarme.
+    </p>
+    <div class="flex flex-wrap justify-center gap-6">
+      {
+        socialLinks.map((link) => (
+          <IconLink
+            href={link.url}
+            icon={link.icon}
+            label={link.platform}
+            external={link.icon !== 'mail'}
+          />
+        ))
+      }
+    </div>
+    <p class="mt-6">
+      <a
+        href={`mailto:${email}`}
+        class="text-primary underline-offset-4 hover:underline"
+      >
+        {email}
+      </a>
+    </p>
+  </div>
+</section>

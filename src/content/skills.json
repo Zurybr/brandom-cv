@@ -1,0 +1,59 @@
+[
+  {
+    "category": "AI & Orchestration",
+    "items": [
+      "Agent Orchestration Patterns",
+      "Prompt Engineering",
+      "Evaluation Frameworks",
+      "Cognitive Architectures",
+      "Structured Outputs",
+      "LangGraph",
+      "scikit-learn",
+      "PyTorch",
+      "NumPy"
+    ]
+  },
+  {
+    "category": "Languages",
+    "items": ["Python", "TypeScript", "C#", "JavaScript", "SQL"]
+  },
+  {
+    "category": "Backend",
+    "items": [
+      ".NET/.NET Core",
+      "Django",
+      "Node.js",
+      "FastAPI",
+      "Flask",
+      "NestJS",
+      "Prisma"
+    ]
+  },
+  {
+    "category": "Frontend",
+    "items": ["React", "Next.js", "Angular 17", "Tailwind CSS"]
+  },
+  {
+    "category": "Infrastructure & Data",
+    "items": [
+      "SQL Server",
+      "Oracle",
+      "PostgreSQL",
+      "BigQuery",
+      "DB2",
+      "Docker",
+      "Azure",
+      "Git",
+      "Linux"
+    ]
+  },
+  {
+    "category": "Methodologies",
+    "items": [
+      "SDD",
+      "AI-First Development",
+      "Event-Driven Architectures",
+      "Agile Leadership"
+    ]
+  }
+]

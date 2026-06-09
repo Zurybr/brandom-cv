@@ -1,0 +1,35 @@
+---
+import { getCollection } from 'astro:content'
+import Layout from '@/layouts/Layout.astro'
+import PostList from '@/components/blog/post-list.astro'
+import { computeReadingTime } from '@/lib/utils'
+
+const allPosts = await getCollection('blog')
+
+const posts = allPosts
+  .sort(
+    (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+  )
+  .map((post) => ({
+    slug: post.id,
+    title: post.data.title,
+    date: post.data.date.toISOString(),
+    category: post.data.category,
+    excerpt: post.data.excerpt,
+    readingTime: computeReadingTime(post.body || ''),
+  }))
+---
+
+<Layout
+  title="Blog — Brandom Ledesma"
+  description="Artículos sobre desarrollo y tecnología."
+>
+  <main class="mx-auto max-w-5xl px-4 py-16">
+    <h1
+      class="mb-8 text-center text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
+    >
+      Blog
+    </h1>
+    <PostList posts={posts} />
+  </main>
+</Layout>

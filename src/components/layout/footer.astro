@@ -1,0 +1,30 @@
+---
+import IconLink from '@/components/ui/icon-link.astro'
+import type { SocialLink } from '@/types'
+
+interface Props {
+  socialLinks: SocialLink[]
+}
+
+const { socialLinks } = Astro.props
+---
+
+<footer class="border-t border-border bg-muted py-8">
+  <div
+    class="mx-auto flex max-w-5xl flex-col items-center gap-4 px-4 sm:flex-row sm:justify-between"
+  >
+    <p class="text-sm text-muted-foreground">&copy; 2026 Brandom Ledesma</p>
+    <div class="flex gap-4">
+      {
+        socialLinks.map((link) => (
+          <IconLink
+            href={link.url}
+            icon={link.icon}
+            label={link.platform}
+            external={link.icon !== 'mail'}
+          />
+        ))
+      }
+    </div>
+  </div>
+</footer>

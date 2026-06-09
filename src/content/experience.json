@@ -1,0 +1,46 @@
+[
+  {
+    "company": "Reumedika / Lefarma-Artricenter",
+    "role": "Principal AI Engineer",
+    "period": "Oct 2025 – Presente",
+    "description": "Lead AI orchestration and multi-agent architecture design for healthcare systems. Architected event-driven cognitive pipelines integrating LLMs with structured data extraction and clinical workflows. Designed evaluation frameworks for AI-generated outputs in production environments with strict compliance requirements.",
+    "technologies": [
+      "Python",
+      "LangGraph",
+      "Azure",
+      "Docker",
+      ".NET",
+      "SQL Server"
+    ]
+  },
+  {
+    "company": "MILANO / DESICI",
+    "role": "Lead Developer / FullStack Consultant",
+    "period": "Sep 2023 – Oct 2025",
+    "description": "Led full-stack development of enterprise web applications for retail and logistics clients across Mexico. Designed and implemented microservice architectures with real-time event processing, REST APIs, and modern frontend interfaces. Mentored junior developers and established coding standards and CI/CD pipelines.",
+    "technologies": [
+      "TypeScript",
+      "Angular 17",
+      "Node.js",
+      ".NET Core",
+      "PostgreSQL",
+      "Docker",
+      "Azure"
+    ]
+  },
+  {
+    "company": "DESICI",
+    "role": "FullStack Developer",
+    "period": "Dic 2020 – Sep 2023",
+    "description": "Developed and maintained web applications for enterprise clients in healthcare and logistics sectors. Built REST APIs, database schemas, and responsive frontends. Implemented data integration pipelines connecting Oracle, SQL Server, and BigQuery. Participated in architectural decisions and technology evaluations.",
+    "technologies": [
+      "JavaScript",
+      "C#",
+      ".NET",
+      "SQL Server",
+      "Oracle",
+      "BigQuery",
+      "Git"
+    ]
+  }
+]

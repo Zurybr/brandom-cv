@@ -1,0 +1,22 @@
+[
+  {
+    "platform": "GitHub",
+    "url": "https://github.com/Zurybr",
+    "icon": "github"
+  },
+  {
+    "platform": "LinkedIn",
+    "url": "https://linkedin.com/in/brandomled",
+    "icon": "linkedin"
+  },
+  {
+    "platform": "Email",
+    "url": "mailto:brandom.ledesma@gmail.com",
+    "icon": "mail"
+  },
+  {
+    "platform": "Website",
+    "url": "https://zurybr.github.io/main/",
+    "icon": "globe"
+  }
+]
