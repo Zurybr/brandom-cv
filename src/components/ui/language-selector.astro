@@ -1,85 +1,46 @@
 ---
-import { languages, type Lang } from '@/i18n/ui'
+import { type Lang } from '@/i18n/ui'
 import { getLangFromUrl, switchLocalePath } from '@/i18n/utils'
 
 const currentLang = getLangFromUrl(Astro.url)
 const currentUrl = Astro.url
 ---
 
-<div class="relative" id="lang-selector">
-  <button
-    type="button"
-    id="lang-toggle"
-    class="flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-sm font-medium transition-colors hover:bg-muted"
-    aria-expanded="false"
-    aria-haspopup="listbox"
-    aria-label="Change language"
+<div class="flex items-center gap-1 rounded-lg border border-border p-0.5">
+  <a
+    href={switchLocalePath(currentUrl, 'en')}
+    class:list={[
+      'flex items-center gap-1.5 rounded-md px-2.5 py-1 text-sm font-medium transition-colors',
+      currentLang === 'en'
+        ? 'bg-primary text-primary-foreground'
+        : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+    ]}
+    title="English"
+    aria-label="English"
   >
-    <span class="text-base">{languages[currentLang]}</span>
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      class="opacity-50"
-    >
-      <path d="m6 9 6 6 6-6"></path>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" class="shrink-0">
+      <rect width="16" height="12" fill="#B22234"/>
+      <path d="M0 1.8h16M0 3.6h16M0 5.4h16M0 7.2h16M0 9h16M0 10.8h16" stroke="#fff" stroke-width="1.2"/>
+      <rect width="6.4" height="6.6" fill="#3C3B6E"/>
     </svg>
-  </button>
-  <ul
-    id="lang-menu"
-    role="listbox"
-    class="absolute right-0 top-full mt-1 hidden w-36 rounded-lg border border-border bg-background py-1 shadow-lg"
+    EN
+  </a>
+  <a
+    href={switchLocalePath(currentUrl, 'es')}
+    class:list={[
+      'flex items-center gap-1.5 rounded-md px-2.5 py-1 text-sm font-medium transition-colors',
+      currentLang === 'es'
+        ? 'bg-primary text-primary-foreground'
+        : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+    ]}
+    title="Español"
+    aria-label="Español"
   >
-    {
-      (Object.entries(languages) as [Lang, string][]).map(([lang, flag]) => (
-        <li role="option" aria-selected={currentLang === lang}>
-          <a
-            href={switchLocalePath(currentUrl, lang)}
-            class:list={[
-              'flex items-center gap-2 px-3 py-2 text-sm transition-colors',
-              currentLang === lang
-                ? 'bg-muted font-medium text-foreground'
-                : 'text-muted-foreground hover:bg-muted hover:text-foreground',
-            ]}
-          >
-            <span class="text-base">{flag}</span>
-            <span>{lang === 'en' ? 'English' : 'Español'}</span>
-          </a>
-        </li>
-      ))
-    }
-  </ul>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" class="shrink-0">
+      <rect width="16" height="12" fill="#006341"/>
+      <rect width="16" height="4" y="0" fill="#FFFFFF"/>
+      <rect width="16" height="4" y="8" fill="#CE1126"/>
+    </svg>
+    ES
+  </a>
 </div>
-
-<script is:inline>
-  ;(function () {
-    var toggle = document.getElementById('lang-toggle')
-    var menu = document.getElementById('lang-menu')
-    if (!toggle || !menu) return
-
-    function setOpen(open) {
-      menu.classList.toggle('hidden', !open)
-      toggle.setAttribute('aria-expanded', String(open))
-    }
-
-    toggle.addEventListener('click', function (e) {
-      e.stopPropagation()
-      var isOpen = toggle.getAttribute('aria-expanded') === 'true'
-      setOpen(!isOpen)
-    })
-
-    document.addEventListener('click', function () {
-      setOpen(false)
-    })
-
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') setOpen(false)
-    })
-  })()
-</script>
