@@ -14,12 +14,11 @@ export function useTranslations(lang: Lang) {
 
 export function useTranslatedPath(lang: Lang) {
   return function translatePath(path: string, l: string = lang) {
-    return l === defaultLang ? path : `/${l}${path}`
+    return `/${l}${path}`
   }
 }
 
 export function getLocalizedPath(path: string, lang: Lang): string {
-  if (lang === defaultLang) return path
   return `/${lang}${path}`
 }
 
