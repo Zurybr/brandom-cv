@@ -92,13 +92,15 @@ body {
   }
 }
 
-@keyframes avatar-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.7;
   }
-  50% {
-    box-shadow: 0 0 0 12px rgba(37, 99, 235, 0);
+  70%,
+  100% {
+    transform: scale(1.2);
+    opacity: 0;
   }
 }
 
@@ -162,8 +164,60 @@ body {
   opacity: 1;
 }
 
-.animate-avatar-pulse {
-  animation: avatar-pulse 2.5s ease-in-out 3 both;
+.avatar-wrapper {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.avatar-wrapper::before,
+.avatar-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border: 3px solid var(--primary);
+  border-radius: 50%;
+  animation: pulse-ring 2.5s ease-out infinite;
+  pointer-events: none;
+}
+
+.avatar-wrapper::after {
+  animation-delay: 1.25s;
+}
+
+.avatar-image {
+  position: relative;
+  z-index: 1;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.35s ease;
+}
+
+.avatar-image:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 28px rgba(37, 99, 235, 0.45);
+  border-color: var(--accent);
+}
+
+.nav-avatar {
+  display: inline-flex;
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity 350ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 350ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.nav-avatar.is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.avatar-wrapper.is-in-nav {
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 350ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 350ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .animate-underline {
@@ -173,10 +227,22 @@ body {
 @media (prefers-reduced-motion: reduce) {
   [data-animate],
   [data-stagger] > *,
-  .animate-avatar-pulse,
-  .animate-underline {
+  .avatar-wrapper::before,
+  .avatar-wrapper::after,
+  .animate-underline,
+  .nav-avatar,
+  .avatar-wrapper.is-in-nav {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
+    transition: none !important;
+  }
+  .nav-avatar {
+    opacity: 0 !important;
+    transform: scale(0) !important;
+  }
+  .nav-avatar.is-visible {
+    opacity: 1 !important;
+    transform: scale(1) !important;
   }
 }

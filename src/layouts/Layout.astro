@@ -40,7 +40,7 @@ import '@/styles/global.css'
     }
     <meta name="generator" content={Astro.generator} />
   </head>
-  <body class="min-h-full flex flex-col">
+  <body class="min-h-screen flex flex-col">
     <Header />
     <div class="flex-1">
       <slot />
@@ -62,6 +62,27 @@ import '@/styles/global.css'
       document.querySelectorAll('[data-animate], [data-stagger]').forEach((el) => {
         observer.observe(el)
       })
+    </script>
+    <script is:inline>
+      ;(function () {
+        var heroWrapper = document.getElementById('hero-avatar-wrapper')
+        var navAvatar = document.getElementById('nav-avatar')
+        if (!heroWrapper || !navAvatar) return
+
+        var scrollObserver = new IntersectionObserver(
+          function ([entry]) {
+            var inNav = !entry.isIntersecting
+            navAvatar.classList.toggle('is-visible', inNav)
+            heroWrapper.classList.toggle('is-in-nav', inNav)
+          },
+          {
+            threshold: 0,
+            rootMargin: '-80px 0px 0px 0px',
+          }
+        )
+
+        scrollObserver.observe(heroWrapper)
+      })()
     </script>
   </body>
 </html>

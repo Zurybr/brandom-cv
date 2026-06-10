@@ -16,8 +16,17 @@ const currentPath = Astro.url.pathname
   >
     <a
       href="/"
-      class="text-lg font-bold text-foreground transition-colors hover:text-primary"
+      class="flex items-center gap-2 text-lg font-bold text-foreground transition-colors hover:text-primary"
     >
+      <span id="nav-avatar" class="nav-avatar">
+        <img
+          src="/images/profile.png"
+          alt=""
+          width="36"
+          height="36"
+          class="h-9 w-9 rounded-full border-2 border-primary object-cover sm:h-9 sm:w-9"
+        />
+      </span>
       BL
     </a>
 

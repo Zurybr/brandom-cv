@@ -2,7 +2,7 @@
   {
     "company": "Reumedika / Lefarma-Artricenter",
     "role": "Principal AI Engineer",
-    "period": "Oct 2025 – Presente",
+    "period": "Oct 2025 – Present",
     "description": "Lead AI orchestration and multi-agent architecture design for healthcare systems. Architected event-driven cognitive pipelines integrating LLMs with structured data extraction and clinical workflows. Designed evaluation frameworks for AI-generated outputs in production environments with strict compliance requirements.",
     "technologies": [
       "Python",
@@ -31,7 +31,7 @@
   {
     "company": "DESICI",
     "role": "FullStack Developer",
-    "period": "Dic 2020 – Sep 2023",
+    "period": "Dec 2020 – Sep 2023",
     "description": "Developed and maintained web applications for enterprise clients in healthcare and logistics sectors. Built REST APIs, database schemas, and responsive frontends. Implemented data integration pipelines connecting Oracle, SQL Server, and BigQuery. Participated in architectural decisions and technology evaluations.",
     "technologies": [
       "JavaScript",
@@ -41,6 +41,76 @@
       "Oracle",
       "BigQuery",
       "Git"
+    ]
+  },
+  {
+    "company": "MTI",
+    "role": "Web Developer",
+    "period": "Oct 2021 – Feb 2022",
+    "description": "Built websites using React.js. Implemented authentication systems based on JWT and Cookies. Developed stored procedures and functions in SQL Server and PostgreSQL. Implemented changes across multiple CRMs designed in .NET.",
+    "highlights": [
+      "JWT & Cookie-based authentication",
+      "SQL Server & PostgreSQL stored procedures",
+      ".NET CRM implementations"
+    ],
+    "technologies": [
+      "React.js",
+      "JWT",
+      ".NET",
+      "SQL Server",
+      "PostgreSQL"
+    ]
+  },
+  {
+    "company": "ironbit",
+    "role": "Web Developer",
+    "period": "Dec 2020 – Oct 2021",
+    "description": "Wrote modern, performant, maintainable code for client and internal projects across JavaScript, C#, and Python. Developed applications using jQuery and vanilla JS for API consumption. Applied MVC design patterns. Built Web Services and REST APIs based on .NET Core 3 and .NET Framework. Performed SQL Server database consulting and query optimization.",
+    "highlights": [
+      "REST APIs with .NET Core 3",
+      "MVC architecture patterns",
+      "Multi-language development (JS, C#, Python)"
+    ],
+    "technologies": [
+      "JavaScript",
+      "C#",
+      "Python",
+      ".NET Core 3",
+      ".NET Framework",
+      "jQuery",
+      "SQL Server"
+    ]
+  },
+  {
+    "company": "Personal Projects",
+    "role": "Independent Developer",
+    "period": "2020 – Present",
+    "description": "Continuous learning and development of personal projects. Built full-stack applications using MVC and MVT patterns with Django, React, and .NET. Actively studying AI, deep learning, and emerging technologies.",
+    "highlights": [
+      "Django + React full-stack apps",
+      "MVC & MVT architecture patterns",
+      "AI & Deep Learning exploration"
+    ],
+    "technologies": [
+      "Django",
+      "React",
+      ".NET",
+      "Python"
+    ]
+  },
+  {
+    "company": "IPN – Center for Nanosciences and Micro/Nanotechnologies",
+    "role": "Researcher",
+    "period": "Jul 2017 – Jul 2020",
+    "description": "Performed mechanical stress research in atomic force microscopy. Implemented MATLAB simulations for calculating mechanical stress on cantilevers.",
+    "highlights": [
+      "Atomic Force Microscopy research",
+      "MATLAB stress simulations"
+    ],
+    "technologies": [
+      "MATLAB",
+      "AFM",
+      "Scientific Computing"
     ]
   }
 ]

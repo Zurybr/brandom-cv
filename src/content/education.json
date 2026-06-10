@@ -1,5 +1,11 @@
 [
   {
+    "institution": "Instituto Politécnico Nacional (IPN)",
+    "degree": "Research – Center for Nanosciences and Micro/Nanotechnologies",
+    "period": "Jul 2017 – Jul 2020",
+    "description": "Mechanical stress research in atomic force microscopy. Implemented MATLAB simulations for calculating mechanical stress on cantilevers."
+  },
+  {
     "institution": "Universidad Politécnica del Valle de México (UPVM)",
     "degree": "B.S. in Nanotechnology Engineering",
     "period": "Graduated: 2021",
