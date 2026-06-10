@@ -98,11 +98,22 @@
   const mesh = new THREE.Mesh(geometry, material);
   scene.add(mesh);
 
-  // Scroll → uWaterLevel
+  // Scroll → uWaterLevel + underwater text detection
+  const sections = document.querySelectorAll<HTMLElement>('main > section');
+
   function updateWaterLevel() {
     const scrollMax = document.body.scrollHeight - window.innerHeight;
     const progress = scrollMax > 0 ? window.scrollY / scrollMax : 0;
     material.uniforms.uWaterLevel.value = Math.max(0, Math.min(1, progress));
+
+    // Water line in viewport coordinates (from bottom, capped at 80%)
+    const waterLinePx = window.innerHeight * (1 - progress * 0.8);
+
+    sections.forEach((section) => {
+      const rect = section.getBoundingClientRect();
+      const sectionMid = rect.top + rect.height * 0.3;
+      section.classList.toggle('is-underwater', sectionMid > waterLinePx);
+    });
   }
 
   window.addEventListener('scroll', updateWaterLevel, { passive: true });

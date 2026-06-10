@@ -224,6 +224,28 @@ body {
   animation: underline-grow 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* Underwater text — when fluid wave background covers a section */
+.is-underwater {
+  --foreground: #e0f7fa;
+  --muted-foreground: #80deea;
+  --primary: #22d3ee;
+  --primary-foreground: #0a0a0a;
+  --accent: #67e8f9;
+  --accent-foreground: #0a0a0a;
+}
+
+.is-underwater h1,
+.is-underwater h2,
+.is-underwater h3 {
+  color: #e0f7fa;
+}
+
+.is-underwater p,
+.is-underwater li,
+.is-underwater span {
+  color: #b2ebf2;
+}
+
 @media (prefers-reduced-motion: reduce) {
   [data-animate],
   [data-stagger] > *,
