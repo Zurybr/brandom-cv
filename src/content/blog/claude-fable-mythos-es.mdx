@@ -1,0 +1,118 @@
+---
+title: 'Claude Fable 5 y Mythos 5: La Nueva Frontera de Anthropic'
+date: '2026-06-09'
+category: 'IA'
+excerpt: 'Anthropic lanza Claude Fable 5, el modelo más capaz disponible al público, y Claude Mythos 5 para ciberdefensores. Análisis de capacidades, salvaguardas y lo que significa para la ingeniería de software.'
+lang: 'es'
+---
+
+![Claude Fable 5 y Mythos 5](/images/blog/claude-fable-mythos/hero.jpg)
+
+El 9 de junio de 2026, Anthropic anunció el lanzamiento simultáneo de **Claude Fable 5** y **Claude Mythos 5**: dos modelos que comparten la misma arquitectura base pero con diferencias críticas en sus salvaguardas. Como ingeniero trabajando con modelos de lenguaje a escala de producción, estos lanzamientos representan un cambio de paradigma.
+
+## Dos Modelos, Una Arquitectura
+
+**Fable 5** es un modelo de clase Mythos hecho seguro para uso general. **Mythos 5** es el mismo modelo con salvaguardas levantadas en áreas específicas, disponible solo para ciberdefensores e investigadores acreditados.
+
+> *Fable* viene del latín *fabula*, "aquello que se cuenta", similar al griego *mythos*. Las salvaguardas son lo que distingue los dos modelos — y por eso tienen nombres diferentes.
+
+![Comparativa de benchmarks](/images/blog/claude-fable-mythos/infographic.png)
+
+## Capacidades Técnicas
+
+### Ingeniería de Software
+
+Stripe reportó que Fable 5 comprimió meses de ingeniería en días. En un codebase de Ruby de 50 millones de líneas, el modelo completó una migración completa en un día que habría tomado a un equipo más de dos meses manualmente.
+
+![Agentes y herramientas](/images/blog/claude-fable-mythos/agents-tools.png)
+
+En el benchmark FrontierCode de Cognition, Fable 5 obtiene la puntuación más alta entre modelos frontera, incluso con esfuerzo medio. Esto es notable: el modelo logra mejor calidad de código con menos tokens que sus predecesores.
+
+### Trabajo de Conocimiento
+
+En el Finance Benchmark de Hebbia para razonamiento a nivel senior, Fable 5 obtiene la puntuación más alta de cualquier modelo. IMC reportó que el modelo superó sus evaluaciones de análisis de trading casi en todas las áreas: búsqueda factual, razonamiento conceptual, análisis de causa raíz y análisis de valor esperado.
+
+### Visión
+
+Fable 5 es el nuevo estado del arte en tareas que involucran visión. Puede reconstruir el código fuente de una aplicación web desde capturas de pantalla. Pero lo más impresionante: completó Pokémon FireRed usando solo capturas de pantalla del juego — sin mapas, ayudas de navegación ni información extra del estado del juego. Modelos anteriores de Claude necesitaban un harness complejo para jugar; Fable lo hizo con visión pura.
+
+### Memoria y Contexto Largo
+
+Fable 5 se mantiene enfocado a través de millones de tokens en tareas de larga duración. En *Slay the Spire*, darle acceso a memoria persistente basada en archivos mejoró su rendimiento tres veces más que a Opus 4.8 — y alcanzó el acto final tres veces más seguido.
+
+## Investigación Científica con Mythos 5
+
+### Diseño de Fármacos
+
+Los expertos internos en diseño de proteínas de Anthropic aceleraron aspectos del proceso de diseño de fármacos aproximadamente diez veces usando Mythos 5. En un ejemplo, Mythos 5 — con herramientas de diseño de proteínas y bioinformática pero sin asistencia humana — igualó o superó a operadores humanos expertos.
+
+![Diseño de proteínas por Mythos 5](/images/blog/claude-fable-mythos/fable-writing.png)
+
+9 de los 14 objetivos proteicos del estudio produjeron candidatos sólidos para diseño de fármacos que Anthropic está investigando actualmente.
+
+### Hipótesis Novedosas en Biología Molecular
+
+Mythos 5 es el primer modelo de Anthropic que produce consistentemente hipótesis científicas nuevas y convincentes. En comparaciones a ciegas contra modelos Opus, los científicos prefirieron las hipótesis de Mythos ~80% de las veces. Una hipótesis de Mythos — un mecanismo novedoso para una proteína de *E. coli* — fue corroborada independientemente en un estudio de un laboratorio que trabajaba en el mismo problema.
+
+### Investigación Genómica
+
+Mythos 5 condujo investigación genómica novedosa durante más de una semana de trabajo en gran parte autónomo. Ensambló datos de célula única para millones de células que abarcan 138 especies animales y diseñó un modelo de machine learning que superó a un modelo publicado en la revista *Science* — a pesar de ser 100 veces más pequeño.
+
+## El Sistema de Salvaguardas
+
+Lanzar un modelo con estas capacidades conlleva riesgos reales. Sin salvaguardas, las capacidades de Fable 5 en ciberseguridad podrían ser malutilizadas para causar daño serio.
+
+![Arquitectura de salvaguardas](/images/blog/claude-fable-mythos/fable-architecture.png)
+
+### Clasificadores de Seguridad
+
+Cuando los clasificadores de Fable detectan una solicitud relacionada con ciberseguridad, biología/química, o destilación, la respuesta es manejada automáticamente por **Claude Opus 4.8** en su lugar. Los usuarios son informados cuando esto ocurre.
+
+Más del **95% de las sesiones** de Fable no involucran ningún fallback. Para esas sesiones, el rendimiento de Fable 5 es efectivamente el mismo que Mythos 5.
+
+### Red Teaming
+
+Anthropic sometió sus clasificadores a red teaming extensivo:
+
+- Un bug bounty externo produjo **cero jailbreaks universales** en más de 1,000 horas de testing
+- Organizaciones de red teaming externas tampoco encontraron jailbreaks universales en tareas agentivas de larga duración
+- Un socio externo encontró que Fable 5 tuvo **cero complacencias** con solicitudes dañinas de ciberseguridad, incluso con 30 técnicas de jailbreak públicas
+
+![Resultados de ciberseguridad](/images/blog/claude-fable-mythos/benchmark-results.png)
+
+### Retención de Datos
+
+Para modelos de clase Mythos, Anthropic requiere retención de datos de 30 días para todos los clientes empresariales. Los datos **no se usan para entrenar nuevos modelos Claude** y se eliminan después de 30 días en casi todos los casos. Harvey, uno de los partners legales de Anthropic, destacó esta diferencia en sus prácticas de procesamiento de datos como una consideración importante para sus clientes.
+
+## Adopción Temprana
+
+Los primeros en probar Fable 5 reportan resultados impresionantes:
+
+- **Cursor**: "El modelo estado del arte en CursorBench. Abrió una clase de problemas de horizonte largo que estaban fuera del alcance de modelos anteriores."
+- **GitHub**: "Tomó tareas de código complejas y de horizonte largo con un nivel de autonomía y confiabilidad que superó benchmarks previos."
+- **Stripe**: "Comprimió meses de ingeniería en días."
+- **Harvey**: En el Legal Agent Benchmark (LAB), Fable 5 obtuvo **13.3%** — un récord absoluto, contra el 10.4% de Opus 4.8. En BigLaw Bench, alcanzó **93.4%**.
+
+![Comparativa de modelos](/images/blog/claude-fable-mythos/model-comparison.png)
+
+## Precios y Disponibilidad
+
+- **$10 por millón de tokens de entrada**, **$50 por millón de tokens de salida** — menos de la mitad del precio de Claude Mythos Preview
+- Disponible vía API como `claude-fable-5`
+- En planes Pro/Max/Team hasta el 22 de junio, luego requiere créditos de uso hasta que la capacidad permita restaurarlo como estándar
+
+## Lo Que Esto Significa
+
+Como Principal AI Engineer, veo tres implicaciones clave:
+
+1. **Agentes autónomos de larga duración son ahora viables**: Fable 5 mantiene coherencia a través de millones de tokens. Esto cambia fundamentalmente qué tareas puedes delegar a un agente.
+
+2. **La brecha entre seguridad y capacidad se está cerrando**: Anthropic demuestra que es posible lanzar modelos de clase Mythos con salvaguardas robustas. No es perfecto — los falsos positivos existen — pero es un paso adelante significativo.
+
+3. **El precio rinde hacia la democratización**: A menos de la mitad del precio del Mythos Preview, estas capacidades están llegando a más desarrolladores e investigadores.
+
+Los próximos meses serán determinantes. La expansión del programa de acceso confiable para biología y ciberseguridad, junto con la mejora continua de los clasificadores, definirá si este modelo de lanzamiento balanceado se consolida.
+
+---
+
+*Fuentes: [Anthropic — Claude Fable 5 and Mythos 5](https://www.anthropic.com/news/claude-fable-5-mythos-5), [Harvey — Fable 5 Now Available](https://www.harvey.ai/blog/fable-5-now-available-in-harvey)*
