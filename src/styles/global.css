@@ -226,24 +226,25 @@ body {
 
 /* Underwater text — when fluid wave background covers a section */
 .is-underwater {
-  --foreground: #e0f7fa;
-  --muted-foreground: #80deea;
-  --primary: #22d3ee;
-  --primary-foreground: #0a0a0a;
-  --accent: #67e8f9;
-  --accent-foreground: #0a0a0a;
+  --foreground: #021a24;
+  --muted-foreground: #0c3a4a;
+  --primary: #0891b2;
+  --primary-foreground: #e0f7fa;
+  --accent: #0e7490;
+  --accent-foreground: #e0f7fa;
+  --border: #0e7490;
 }
 
 .is-underwater h1,
 .is-underwater h2,
 .is-underwater h3 {
-  color: #e0f7fa;
+  color: #021a24;
 }
 
 .is-underwater p,
 .is-underwater li,
 .is-underwater span {
-  color: #b2ebf2;
+  color: #164e63;
 }
 
 @media (prefers-reduced-motion: reduce) {
