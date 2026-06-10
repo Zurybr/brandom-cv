@@ -1,11 +1,18 @@
+type Bilingual = { en: string; es: string }
+
 export interface Profile {
   name: string
-  title: string
-  summary: string
+  title: string | Bilingual
+  summary: string | Bilingual
   avatar: string
-  location: string
+  location: string | Bilingual
   email: string
   resumeUrl: string
+}
+
+export function localizeText(value: string | Bilingual, lang: string): string {
+  if (typeof value === 'string') return value
+  return value[lang as keyof Bilingual] || value.en
 }
 
 export interface Experience {

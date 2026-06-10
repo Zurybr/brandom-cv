@@ -1,9 +1,18 @@
 {
   "name": "Brandom Rafael Ledesma Muñoz",
-  "title": "Principal AI Engineer & Software Architect",
-  "summary": "Software Architect and Nanotechnology Engineer focused on the intersection of complex systems, AI orchestration, and production-grade software. I specialize in designing multi-agent cognitive architectures, real-time event-driven systems, and seamless AI-UI interface layers.",
+  "title": {
+    "en": "Principal AI Engineer & Software Architect",
+    "es": "Ingeniero AI Principal & Arquitecto de Software"
+  },
+  "summary": {
+    "en": "Software Architect and Nanotechnology Engineer focused on the intersection of complex systems, AI orchestration, and production-grade software. I specialize in designing multi-agent cognitive architectures, real-time event-driven systems, and seamless AI-UI interface layers.",
+    "es": "Arquitecto de Software e Ingeniero en Nanotecnología enfocado en la intersección de sistemas complejos, orquestación de AI y software de grado producción. Me especializo en diseñar arquitecturas cognitivas multi-agente, sistemas event-driven en tiempo real y capas de interfaz AI-UI seamless."
+  },
   "avatar": "/images/profile.png",
-  "location": "Mexico City",
+  "location": {
+    "en": "Mexico City",
+    "es": "Ciudad de México"
+  },
   "email": "brandom.ledesma@gmail.com",
   "resumeUrl": ""
 }

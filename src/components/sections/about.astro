@@ -1,10 +1,12 @@
 ---
 import type { Lang } from '@/i18n/ui'
+import type { Bilingual } from '@/types'
 import { useTranslations } from '@/i18n/utils'
+import { localizeText } from '@/types'
 import SectionHeading from '@/components/ui/section-heading.astro'
 
 interface Props {
-  summary: string
+  summary: string | Bilingual
   lang: Lang
 }
 
@@ -16,7 +18,7 @@ const t = useTranslations(lang)
   <SectionHeading title={t('section.about')} />
   <div data-animate="fade-up" class="mx-auto max-w-3xl text-center">
     <p class="text-lg leading-relaxed text-muted-foreground">
-      {summary}
+      {localizeText(summary, lang)}
     </p>
   </div>
 </section>

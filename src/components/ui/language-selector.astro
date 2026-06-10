@@ -6,22 +6,80 @@ const currentLang = getLangFromUrl(Astro.url)
 const currentUrl = Astro.url
 ---
 
-<div class="flex items-center gap-1">
-  {
-    (Object.entries(languages) as [Lang, string][]).map(([lang, flag]) => (
-      <a
-        href={switchLocalePath(currentUrl, lang)}
-        class:list={[
-          'text-lg leading-none p-1 rounded transition-opacity',
-          currentLang === lang
-            ? 'opacity-100'
-            : 'opacity-50 hover:opacity-80',
-        ]}
-        aria-label={lang === 'en' ? 'English' : 'Español'}
-        title={lang === 'en' ? 'English' : 'Español'}
-      >
-        {flag}
-      </a>
-    ))
-  }
+<div class="relative" id="lang-selector">
+  <button
+    type="button"
+    id="lang-toggle"
+    class="flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-sm font-medium transition-colors hover:bg-muted"
+    aria-expanded="false"
+    aria-haspopup="listbox"
+    aria-label="Change language"
+  >
+    <span class="text-base">{languages[currentLang]}</span>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="opacity-50"
+    >
+      <path d="m6 9 6 6 6-6"></path>
+    </svg>
+  </button>
+  <ul
+    id="lang-menu"
+    role="listbox"
+    class="absolute right-0 top-full mt-1 hidden w-36 rounded-lg border border-border bg-background py-1 shadow-lg"
+  >
+    {
+      (Object.entries(languages) as [Lang, string][]).map(([lang, flag]) => (
+        <li role="option" aria-selected={currentLang === lang}>
+          <a
+            href={switchLocalePath(currentUrl, lang)}
+            class:list={[
+              'flex items-center gap-2 px-3 py-2 text-sm transition-colors',
+              currentLang === lang
+                ? 'bg-muted font-medium text-foreground'
+                : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+            ]}
+          >
+            <span class="text-base">{flag}</span>
+            <span>{lang === 'en' ? 'English' : 'Español'}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
 </div>
+
+<script is:inline>
+  ;(function () {
+    var toggle = document.getElementById('lang-toggle')
+    var menu = document.getElementById('lang-menu')
+    if (!toggle || !menu) return
+
+    function setOpen(open) {
+      menu.classList.toggle('hidden', !open)
+      toggle.setAttribute('aria-expanded', String(open))
+    }
+
+    toggle.addEventListener('click', function (e) {
+      e.stopPropagation()
+      var isOpen = toggle.getAttribute('aria-expanded') === 'true'
+      setOpen(!isOpen)
+    })
+
+    document.addEventListener('click', function () {
+      setOpen(false)
+    })
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false)
+    })
+  })()
+</script>
