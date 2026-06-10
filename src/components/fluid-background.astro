@@ -106,13 +106,15 @@
     const progress = scrollMax > 0 ? window.scrollY / scrollMax : 0;
     material.uniforms.uWaterLevel.value = Math.max(0, Math.min(1, progress));
 
-    // Water line in viewport coordinates (from bottom, capped at 80%)
-    const waterLinePx = window.innerHeight * (1 - progress * 0.8);
+    // Water line matching the visual wave peaks (base level + wave margin)
+    const waveMarginPx = window.innerHeight * 0.12;
+    const waterLinePx = window.innerHeight * (1 - progress * 0.8) + waveMarginPx;
 
     sections.forEach((section) => {
       const rect = section.getBoundingClientRect();
-      const sectionMid = rect.top + rect.height * 0.3;
-      section.classList.toggle('is-underwater', sectionMid > waterLinePx);
+      // Use 15% from the top so the change triggers only when waves reach near the top
+      const sectionPoint = rect.top + rect.height * 0.15;
+      section.classList.toggle('is-underwater', sectionPoint > waterLinePx);
     });
   }
 
