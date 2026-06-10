@@ -1,6 +1,7 @@
 ---
 import Header from '@/components/layout/header.astro'
 import Footer from '@/components/layout/footer.astro'
+import FluidBackground from '@/components/fluid-background.astro'
 import socialLinksData from '@/content/social-links.json'
 import type { SocialLink } from '@/types'
 import type { Lang } from '@/i18n/ui'
@@ -50,6 +51,7 @@ import '@/styles/global.css'
     <meta name="generator" content={Astro.generator} />
   </head>
   <body class="min-h-screen flex flex-col">
+    <FluidBackground />
     <Header />
     <div class="flex-1">
       <slot />
