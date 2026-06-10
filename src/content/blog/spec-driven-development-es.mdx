@@ -1,0 +1,268 @@
+---
+title: 'De Vibe Coding a Spec-Driven Development: Por Qué las Especificaciones Son el Nuevo Código Fuente'
+date: '2026-06-10'
+category: 'IA'
+excerpt: 'La era del vibe coding está terminando. Spec-Driven Development reemplaza el prompt-and-pray con especificaciones estructuradas contra las que los agentes de IA ejecutan. Guía práctica de la metodología, los tres niveles de adopción y cómo empezar con GitHub Spec Kit.'
+lang: 'es'
+---
+
+Andrej Karpathy acuñó "vibe coding" en febrero de 2025. Un año después, admitió que la era está terminando. ¿El reemplazo? **Ingeniería agéntica**: orquestar agentes de IA contra especificaciones detalladas con supervisión humana, no prompetear código sin estructura.
+
+Este cambio tiene un nombre: **Spec-Driven Development (SDD)**. Y está transformando fundamentalmente cómo se construye software de producción.
+
+![Spec-Driven Development: de Kiro a Spec Kit y Tessl](/images/blog/spec-driven-development/hero.jpg)
+
+## El Problema del Vibe Coding
+
+El vibe coding funciona para prototipos. Falla a escala. Aquí está el porqué.
+
+**Decaimiento de contexto.** Los agentes de IA son stateless. Cuando inicias un nuevo chat, pierdes cada decisión tomada en el anterior. El agente olvida por qué limpiaste los datos de cierta forma, y la siguiente actualización introduce silenciosamente un enfoque diferente.
+
+**Sin convenciones compartidas.** Sin estructura, los equipos terminan con cinco patrones diferentes para la misma operación. Un desarrollador usa el patrón Repository, otro pone llamadas ORM directamente en controllers. Ninguno está mal, pero la inconsistencia se acumula.
+
+**Sin auditoría.** Las conversaciones con agentes de IA son efímeras. Cuando algo falla tres meses después, no hay registro de por qué se tomó una decisión o qué alternativas se consideraron.
+
+**Puntos ciegos de seguridad.** Investigación de SonarQube encontró que más del 70% del código generado por algunos LLMs contenía vulnerabilidades de severidad BLOCKER. Los unit tests atrapan bugs a nivel función. No atrapan violaciones arquitectónicas, drift de contratos API, o anti-patrones de seguridad cross-service.
+
+Los números son contundentes: para febrero de 2026, investigadores contaron más de 110,000 problemas de IA sobrevivientes en repositorios de producción. El vibe coding entrega features rápido, pero entrega problemas más rápido.
+
+## ¿Qué Es Spec-Driven Development?
+
+SDD trata las especificaciones como contratos ejecutables, no documentación pasiva. La spec se convierte en la única fuente de verdad contra la que trabajan tanto humanos como agentes de IA.
+
+Una spec no es un PRD. Los PRDs se escriben para humanos que pueden interpretar ambigüedad. Las specs de SDD se escriben para agentes de IA que llenarán la ambigüedad con suposiciones incorrectas. La spec define explícitamente resultados, límites de alcance, restricciones, decisiones previas, desglose de tareas y criterios de verificación.
+
+### Los Tres Niveles de SDD
+
+No todo SDD es igual. Birgitta Böckeler de Thoughtworks identifica tres niveles distintos:
+
+![Los tres niveles de SDD: Spec-First, Spec-Anchored y Spec-as-Source](/images/blog/spec-driven-development/sdd-levels.png)
+
+**1. Spec-First.** Una spec bien elaborada se escribe antes de la implementación y guía al agente de IA. Después de que el feature se entrega, la spec puede o no mantenerse. Este es el punto de entrada. La mayoría de los equipos empiezan aquí.
+
+**2. Spec-Anchored.** La spec vive junto al código y evoluciona con él. Cuando los requisitos cambian, la spec se actualiza primero. Los tests automatizados conectan documentación e implementación, integrados en CI/CD para mantener ambos sincronizados. Aquí es donde la mayoría de los equipos de ingeniería deberían apuntar.
+
+**3. Spec-as-Source.** La spec ES el código fuente. Los humanos nunca editan los archivos generados. Los cambios en la spec disparan automáticamente la regeneración de código. Esta es la forma más ambiciosa, y la más riesgosa dado el no-determinismo de los LLMs. Resuena con las promesas (y fracasos) del Model-Driven Development de principios de los 2000s.
+
+### Cómo se Relaciona SDD con TDD y BDD
+
+SDD no reemplaza TDD ni BDD. Opera en una capa diferente.
+
+| Dimensión | TDD | BDD | Vibe Coding | SDD |
+|---|---|---|---|---|
+| Artefacto principal | Unit tests | Escenarios Given-When-Then | Prompts en lenguaje natural | Especificaciones ejecutables |
+| Alcance | Corrección de funciones | Comportamiento cross-funcional | Aplicación completa | Contratos arquitectónicos system-wide |
+| Validación | Suites de tests automatizadas | Documentación de workshops | Review manual (si acaso) | Build falla si hay divergencia de spec |
+| Gobernanza de IA | Ninguna | Ninguna | Ninguna | Restricciones constitucionales |
+
+Usa TDD para verificación de implementación. Usa BDD para colaboración cross-funcional. Agrega SDD encima para gobernanza arquitectónica.
+
+## El Workflow SDD en la Práctica
+
+Un workflow SDD típico sigue estas etapas:
+
+![Archivos de contexto del agente: Memory Bank vs Specs](/images/blog/spec-driven-development/sdd-overview.png)
+
+### 1. Definir la Constitución
+
+Antes de escribir cualquier spec de feature, establece los principios fundacionales del proyecto. Esta "constitución" típicamente incluye:
+
+- **Misión**: ¿Por qué estamos construyendo esto? ¿Cuáles son los objetivos clave?
+- **Tech Stack**: Decisiones técnicas, procesos de deployment y tooling.
+- **Roadmap**: Plan por fases, actualizado continuamente conforme el proyecto evoluciona.
+
+La constitución actúa como barandilla. Cada spec de feature, cada plan, cada tarea debe alinearse con estos principios. Esto previene que los agentes tomen decisiones arquitectónicas que contradigan la fundación del proyecto.
+
+### 2. Escribir la Especificación del Feature
+
+Enfócate en el **qué** y el **por qué**, no en el **cómo**. Una buena spec incluye:
+
+- **Resultados**: No "construir un flujo de auth" sino "un usuario puede registrarse con email/password, recibir un email de verificación, e iniciar sesión sin errores."
+- **Límites de alcance (in-scope y out-of-scope)**: Establece explícitamente qué NO está incluido. Los agentes expanden el alcance si no les cierras la puerta.
+- **Restricciones**: Tech stack existente, límites de API, requisitos de performance.
+- **Decisiones ya tomadas**: Si el esquema de base de datos ya fue elegido, dilo. Los agentes que no saben que una decisión fue tomada tomarán la suya propia.
+- **Desglose de tareas**: Sub-tareas discretas que permiten a los agentes trabajar en paralelo y verificar incrementalmente.
+- **Criterios de verificación**: Qué tests pasan, qué edge cases se manejan, contra qué verifica el verificador.
+
+### 3. Planear y Validar
+
+Traduce la spec en un plan de implementación técnico. Elige el tech stack, define la arquitectura, y desglosa el trabajo. Luego valida el plan haciendo que un segundo agente lo revise con contexto fresco.
+
+### 4. Implementar
+
+Ejecuta el plan tarea por tarea. Cada tarea es lo suficientemente pequeña para verificarla independientemente. La spec es la fuente de verdad en todo momento.
+
+### 5. Validar e Iterar
+
+Después de la implementación, valida contra la spec. Usa un patrón de agente adversarial: un agente implementa, un agente separado verifica. El implementor optimiza para completar la tarea; el verificador optimiza para encontrar fallos. Esta tensión produce mejores resultados.
+
+### 6. Replanear
+
+Antes de saltar al siguiente feature, pausa. Revisa la constitución. Verifica si las prioridades cambiaron. Actualiza el roadmap. Esta fase de replanteamiento es donde los humanos aportan más valor: pensamiento arquitectónico, no escritura de código.
+
+## GitHub Spec Kit: SDD Listo para Usar
+
+El [Spec Kit](https://github.com/github/spec-kit) de GitHub es la forma más práctica de empezar con SDD. Es un toolkit open source (111k+ estrellas, 30+ integraciones de agentes) que estructura todo el workflow SDD en tu proyecto.
+
+![Repositorio de GitHub Spec Kit](/images/blog/spec-driven-development/spec-kit-repo.png)
+
+### Instalación
+
+```bash
+# Requiere uv (gestor de paquetes Python)
+uv tool install specify-cli --from git+https://github.com/github/spec-kit.git
+specify version
+```
+
+### Inicializar tu Proyecto
+
+```bash
+specify init my-project --integration copilot
+# O en el directorio actual:
+specify init . --integration claude
+```
+
+Esto crea una carpeta `.specify/` con templates, scripts y archivos de comandos específicos del agente. Spec Kit soporta Claude Code, GitHub Copilot, Cursor, Codex CLI, Gemini, Kiro, opencode y más de 25 agentes adicionales.
+
+![Inicialización de Spec Kit y slash commands](/images/blog/spec-driven-development/spec-kit-workflow.png)
+
+### El Workflow de Slash Commands
+
+Después de la inicialización, tu agente de coding tiene acceso a comandos SDD estructurados:
+
+| Comando | Propósito |
+|---|---|
+| `/speckit.constitution` | Crear principios rectores del proyecto |
+| `/speckit.specify` | Definir qué construir (requisitos y user stories) |
+| `/speckit.clarify` | Clarificar áreas subespecificadas antes de planear |
+| `/speckit.plan` | Crear planes de implementación técnica |
+| `/speckit.tasks` | Generar listas de tareas accionables |
+| `/speckit.implement` | Ejecutar todas las tareas contra el plan |
+| `/speckit.analyze` | Análisis de consistencia cross-artefacto |
+
+### Paso a Paso: Construyendo con Spec Kit
+
+**Paso 1: Constitución**
+
+```
+/speckit.constitution Create principles focused on code quality,
+testing standards, UX consistency, and performance requirements.
+```
+
+Esto crea `.specify/memory/constitution.md` — la fundación que cada spec subsecuente referencia.
+
+**Paso 2: Especificar el Feature**
+
+```
+/speckit.specify Build a task management app with Kanban boards.
+Users can create projects, assign tasks, drag-and-drop between
+columns, and leave comments. No auth for this MVP phase.
+```
+
+Sé explícito sobre el **qué** y el **por qué**. No menciones el tech stack todavía.
+
+**Paso 3: Clarificar**
+
+```
+/speckit.clarify
+```
+
+Ejecuta un cuestionario estructurado que llena gaps en tu spec. Ejecútalo antes de planear para reducir retrabajo.
+
+**Paso 4: Planear**
+
+```
+/speckit.plan Use Next.js 15 with App Router, PostgreSQL via Prisma,
+and Tailwind CSS. Deploy to Vercel.
+```
+
+Ahora especifica el tech stack. Spec Kit genera `plan.md`, `data-model.md`, `research.md` y contratos API.
+
+**Paso 5: Tareas**
+
+```
+/speckit.tasks
+```
+
+Desglosa el plan en tareas ordenadas y accionables con marcadores de dependencia y hints de ejecución en paralelo.
+
+**Paso 6: Implementar**
+
+```
+/speckit.implement
+```
+
+Ejecuta tareas en orden, respetando dependencias. El agente referencia la constitución, la spec y el plan en todo momento.
+
+### Personalización: Extensiones y Presets
+
+Spec Kit no es rígido. Dos mecanismos de personalización te permiten adaptarlo:
+
+- **Extensiones** agregan capacidades nuevas (integración Jira, gates de security review, workflows específicos de dominio).
+- **Presets** sobreescriben templates y terminología existentes (formatos orientados a compliance, lenguaje específico de dominio, estándares organizacionales).
+
+Múltiples presets pueden apilarse con orden de prioridad. Los overrides locales del proyecto permiten ajustes puntuales sin crear un preset completo.
+
+## El Patrón de Agente Adversarial
+
+Uno de los patrones más poderosos en SDD es asignar agentes separados para verificar el trabajo:
+
+![Patrón de agentes Coordinator, Implementor y Verifier](/images/blog/spec-driven-development/adversarial-pattern.png)
+
+1. Un **Coordinador** desglosa la spec y delega tareas.
+2. Sub-agentes **Implementores** trabajan desde sub-specs.
+3. Un agente **Verificador** chequea el output contra la spec antes de marcar el trabajo como completo.
+
+El implementor y el verificador tienen objetivos opuestos. Uno optimiza para completar la tarea; el otro para encontrar fallos. Este patrón fuerza a las specs a contener criterios de verificación explícitos, lo que mejora las specs mismas.
+
+El tiering de modelos importa aquí: usa tu modelo más capaz para escribir specs (los errores se propagan downstream), un modelo mid-range para implementación, y un modelo rápido para verificación.
+
+## Cuándo Usar SDD (Y Cuándo No)
+
+SDD tiene overhead. No toda tarea lo justifica.
+
+**Escribe una spec cuando:**
+- El trabajo abarca múltiples sesiones de agente
+- Múltiples servicios o repositorios están involucrados
+- Revertir una interpretación incorrecta es costoso
+- Se requiere compliance o audit trails
+- La revisión requiere atención real (lógica de componentes, flujos end-to-end)
+
+**Omite la spec cuando:**
+- El trabajo es exploratorio o experimental
+- Un solo prompt produce output usable
+- El output puede revisarse en menos de cinco minutos
+- El prototipo está destinado a descartarse
+- El cambio es mecánico o de bajo riesgo
+
+La regla práctica: si te molestaría que el agente malinterprete tus requisitos, escribe la spec.
+
+## Comparativa de Herramientas SDD
+
+| Herramienta | Enfoque | Mejor Para |
+|---|---|---|
+| **GitHub Spec Kit** | Scaffolding por CLI, 30+ integraciones de agentes | Equipos adoptando SDD con cualquier agente de coding |
+| **Kiro** (AWS) | Requirements → Design → Tasks en VS Code | Developers que quieren el workflow SDD más simple |
+| **Tessl** | Spec-as-source con generación de código | Equipos explorando pipelines completos spec-to-code |
+
+## Limitaciones y Preguntas Abiertas
+
+SDD no es una bala de plata. Preocupaciones clave:
+
+**Sobrecarga de review.** Spec Kit puede crear 8+ archivos markdown para un solo feature. Revisar markdown puede ser más tedioso que revisar código. Una herramienta SDD efectiva debe proveer una buena experiencia de review de specs.
+
+**Falsa sensación de control.** Context windows más grandes no significan que el agente seguirá cada instrucción. Los agentes ignoran specs, alucinan requisitos, y se exceden siguiendo otros. Los pasos pequeños e iterativos siguen siendo el mejor mecanismo de control.
+
+**¿Un workflow para todos los tamaños?** Las herramientas actuales carecen de flexibilidad. Kiro convierte un bug fix pequeño en 4 user stories con 16 criterios de aceptación. Spec Kit crea documentación extensa para una story de 3 puntos. SDD efectivo necesita workflows calibrados al tamaño del problema.
+
+**Mantenimiento de specs.** Mantener specs sincronizadas con codebases que evolucionan es un problema no resuelto. Spec Kit crea branches por spec, sugiriendo que las specs viven por el lifetime de un change request, no de un feature. La comunidad está debatiendo esto activamente.
+
+**Adopción en brownfield.** Aplicar SDD a codebases existentes requiere reverse-engineering de specs desde código legacy. Esto es categóricamente más difícil que SDD greenfield y pocas herramientas lo abordan bien.
+
+## Conclusión
+
+Spec-Driven Development es la evolución natural del coding asistido por IA. El vibe coding demostró que los LLMs pueden generar código. SDD demuestra que sin especificaciones, el código que generan no es confiable a escala de producción.
+
+La metodología está madurando. Las definiciones son fluidas. El tooling evoluciona rápido. Pero el insight central es sólido: **la spec es la nueva fuente de verdad**, y el rol del ingeniero cambia de escribir código a escribir especificaciones, revisar arquitectura y orquestar agentes.
+
+Empieza con Spec-First en un solo feature. Usa GitHub Spec Kit para estructurar el workflow. Gradúa a Spec-Anchored conforme tu equipo gane confianza. Y recuerda: el objetivo no es escribir más documentación, sino escribir la documentación correcta que prevenga los fallos más costosos.
