@@ -13,6 +13,7 @@ interface Props {
   ogType?: string
   ogPublishedTime?: string
   lang?: Lang
+  hideWaves?: boolean
 }
 
 const {
@@ -21,6 +22,7 @@ const {
   ogType = 'website',
   ogPublishedTime,
   lang,
+  hideWaves = false,
 } = Astro.props
 
 const currentLang = lang || getLangFromUrl(Astro.url)
@@ -51,7 +53,7 @@ import '@/styles/global.css'
     <meta name="generator" content={Astro.generator} />
   </head>
   <body class="min-h-screen flex flex-col">
-    <FluidBackground />
+    { !hideWaves && <FluidBackground /> }
     <Header />
     <div class="flex-1">
       <slot />
