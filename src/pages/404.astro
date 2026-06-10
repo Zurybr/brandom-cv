@@ -1,10 +1,11 @@
 ---
 import Layout from '@/layouts/Layout.astro'
 import type { Lang } from '@/i18n/ui'
-import { useTranslations, getLangFromUrl } from '@/i18n/utils'
+import { useTranslations, getLangFromUrl, useTranslatedPath } from '@/i18n/utils'
 
 const lang = getLangFromUrl(Astro.url)
 const t = useTranslations(lang)
+const translatePath = useTranslatedPath(lang)
 ---
 
 <Layout title="404 — Not Found" lang={lang}>
@@ -17,7 +18,7 @@ const t = useTranslations(lang)
       {t('404.description')}
     </p>
     <a
-      href="/"
+      href={translatePath('/')}
       class="mt-8 inline-block rounded-lg bg-primary px-6 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
     >
       {t('404.back')}

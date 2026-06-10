@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content'
 import Layout from '@/layouts/Layout.astro'
 import { computeReadingTime } from '@/lib/utils'
+import BaseImg from '@/components/ui/base-img.astro'
 import type { Lang } from '@/i18n/ui'
 
 export async function getStaticPaths() {
@@ -59,7 +60,7 @@ const formattedDate = new Date(post.data.date).toLocaleDateString('es-MX', {
             ol: 'ol',
             blockquote: 'blockquote',
             a: 'a',
-            img: 'img',
+            img: BaseImg,
           }}
         />
       </div>

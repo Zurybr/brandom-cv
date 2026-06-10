@@ -1,7 +1,7 @@
 ---
 import type { Profile, Bilingual } from '@/types'
 import type { Lang } from '@/i18n/ui'
-import { useTranslations } from '@/i18n/utils'
+import { useTranslations, publicAsset } from '@/i18n/utils'
 import { localizeText } from '@/types'
 
 interface Props {
@@ -18,7 +18,7 @@ const t = useTranslations(lang)
 >
   <div id="hero-avatar-wrapper" class="avatar-wrapper" data-animate="scale-in" style="animation-delay: 0ms">
     <img
-      src={profile.avatar}
+      src={publicAsset(profile.avatar)}
       alt={`${t('hero.photoAlt')} ${profile.name}`}
       width="200"
       height="200"

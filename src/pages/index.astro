@@ -1,10 +1,11 @@
 ---
 import Layout from '@/layouts/Layout.astro'
-import { useTranslations } from '@/i18n/utils'
+import { useTranslations, publicAsset } from '@/i18n/utils'
 import type { Lang } from '@/i18n/ui'
 
 const lang: Lang = 'en'
 const t = useTranslations(lang)
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
 ---
 
 <html lang={lang}>
@@ -12,7 +13,7 @@ const t = useTranslations(lang)
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Brandom Ledesma — Portfolio</title>
-    <script is:inline>
+    <script is:inline define:vars={{ base }}>
       ;(function () {
         var lang = 'en'
         var stored = localStorage.getItem('preferred-lang')
@@ -30,11 +31,11 @@ const t = useTranslations(lang)
             lang = 'es'
           }
         }
-        window.location.replace('/brandom-cv/' + lang + '/')
+        window.location.replace(base + '/' + lang + '/')
       })()
     </script>
     <noscript>
-      <meta http-equiv="refresh" content="0;url=/brandom-cv/en/" />
+      <meta http-equiv="refresh" content={`0;url=${base}/en/`} />
     </noscript>
   </head>
   <body>

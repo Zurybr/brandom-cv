@@ -1,0 +1,13 @@
+---
+interface Props {
+  src?: string
+  alt?: string
+  [key: string]: any
+}
+
+const { src, alt, ...rest } = Astro.props
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
+const resolvedSrc = typeof src === 'string' && src.startsWith('/') ? `${base}${src}` : src
+---
+
+<img src={resolvedSrc} alt={alt || ''} {...rest} />

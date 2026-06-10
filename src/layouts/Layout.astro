@@ -5,7 +5,7 @@ import FluidBackground from '@/components/fluid-background.astro'
 import socialLinksData from '@/content/social-links.json'
 import type { SocialLink } from '@/types'
 import type { Lang } from '@/i18n/ui'
-import { getLangFromUrl, useTranslations, useTranslatedPath } from '@/i18n/utils'
+import { getLangFromUrl, useTranslations, useTranslatedPath, publicAsset } from '@/i18n/utils'
 
 interface Props {
   title?: string
@@ -37,7 +37,7 @@ import '@/styles/global.css'
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="sitemap" href={publicAsset('/sitemap-index.xml')} />
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta property="og:title" content={title} />
