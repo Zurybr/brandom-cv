@@ -1,0 +1,135 @@
+---
+---
+
+<canvas
+  id="fluid-bg"
+  aria-hidden="true"
+  role="presentation"
+  style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;"
+></canvas>
+
+<script>
+  import * as THREE from 'three';
+
+  const canvas = document.getElementById('fluid-bg') as HTMLCanvasElement;
+  if (!canvas) throw new Error('fluid-bg canvas not found');
+
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight, false);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+  const vertexShader = `
+    void main() {
+      gl_Position = vec4(position.xy, 0.0, 1.0);
+    }
+  `;
+
+  const fragmentShader = `
+    precision mediump float;
+
+    uniform float uTime;
+    uniform float uWaterLevel;
+    uniform vec2 uResolution;
+
+    // Wave function: returns wave surface Y in [0, 1] UV space
+    float wave(float x, float freq1, float amp1, float freq2, float amp2, float speed) {
+      return sin(x * freq1 + uTime * speed) * amp1
+           + sin(x * freq2 + uTime * speed * 0.7) * amp2;
+    }
+
+    void main() {
+      vec2 uv = gl_FragCoord.xy / uResolution;
+
+      // Water level capped at 0.8 (80%) so water never covers the entire screen
+      float waterY = uWaterLevel * 0.8;
+
+      // Soft edge width for smoothstep transitions
+      float edge = 0.02;
+
+      // 3 wave layers with different frequencies/amplitudes
+      float waveMargin = 0.06;
+
+      // Back layer — slowest, widest
+      float backWave = waterY + waveMargin * 2.0
+        + wave(uv.x, 6.0, 0.02, 3.0, 0.01, 0.8);
+      // Mid layer
+      float midWave = waterY + waveMargin
+        + wave(uv.x, 8.0, 0.015, 4.5, 0.008, 1.2);
+      // Front layer — fastest, most detail
+      float frontWave = waterY
+        + wave(uv.x, 10.0, 0.012, 6.0, 0.006, 1.8);
+
+      vec4 color = vec4(0.0);
+
+      // Soft wave edges using smoothstep
+      float backAlpha = smoothstep(backWave + edge, backWave - edge, uv.y);
+      float midAlpha = smoothstep(midWave + edge, midWave - edge, uv.y);
+      float frontAlpha = smoothstep(frontWave + edge, frontWave - edge, uv.y);
+
+      color += vec4(0.031, 0.569, 0.698, 0.25) * backAlpha;   // #0891b2
+      color += vec4(0.024, 0.714, 0.831, 0.40) * midAlpha;     // #06b6d4
+      color += vec4(0.133, 0.827, 0.933, 0.55) * frontAlpha;   // #22d3ee
+
+      gl_FragColor = color;
+    }
+  `;
+
+  const geometry = new THREE.PlaneGeometry(2, 2);
+  const material = new THREE.ShaderMaterial({
+    vertexShader,
+    fragmentShader,
+    uniforms: {
+      uTime: { value: 0.0 },
+      uWaterLevel: { value: 0.0 },
+      uResolution: {
+        value: new THREE.Vector2(
+          window.innerWidth * renderer.getPixelRatio(),
+          window.innerHeight * renderer.getPixelRatio()
+        ),
+      },
+    },
+    transparent: true,
+    depthTest: false,
+  });
+
+  const mesh = new THREE.Mesh(geometry, material);
+  scene.add(mesh);
+
+  // Scroll → uWaterLevel
+  function updateWaterLevel() {
+    const scrollMax = document.body.scrollHeight - window.innerHeight;
+    const progress = scrollMax > 0 ? window.scrollY / scrollMax : 0;
+    material.uniforms.uWaterLevel.value = Math.max(0, Math.min(1, progress));
+  }
+
+  window.addEventListener('scroll', updateWaterLevel, { passive: true });
+  updateWaterLevel();
+
+  // Reduced motion check
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let timeScale = prefersReducedMotion.matches ? 0 : 1;
+  prefersReducedMotion.addEventListener('change', (e) => {
+    timeScale = e.matches ? 0 : 1;
+  });
+
+  // Resize
+  const resizeObserver = new ResizeObserver(() => {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    renderer.setSize(w, h, false);
+    material.uniforms.uResolution.value.set(
+      w * renderer.getPixelRatio(),
+      h * renderer.getPixelRatio()
+    );
+  });
+  resizeObserver.observe(document.body);
+
+  // Animation loop
+  renderer.setAnimationLoop((timestamp: number) => {
+    material.uniforms.uTime.value = (timestamp / 1000) * timeScale;
+    renderer.render(scene, camera);
+  });
+</script>
