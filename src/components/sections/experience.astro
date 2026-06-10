@@ -4,6 +4,7 @@ import type { Lang } from '@/i18n/ui'
 import SectionHeading from '@/components/ui/section-heading.astro'
 import Badge from '@/components/ui/badge.astro'
 import { useTranslations } from '@/i18n/utils'
+import { localizeText } from '@/types'
 
 interface Props {
   experience: Experience[]
@@ -25,12 +26,12 @@ const t = useTranslations(lang)
           class="relative border-l-2 border-primary pl-6"
         >
           <div class="absolute -left-[7px] top-0 h-3 w-3 rounded-full bg-primary" />
-          <h3 class="text-xl font-semibold text-foreground">{exp.role}</h3>
+          <h3 class="text-xl font-semibold text-foreground">{localizeText(exp.role, lang)}</h3>
           <p class="text-sm font-medium text-primary">
-            {exp.company} &middot; {exp.period}
+            {localizeText(exp.company, lang)} &middot; {localizeText(exp.period, lang)}
           </p>
           <p class="mt-2 leading-relaxed text-muted-foreground">
-            {exp.description}
+            {localizeText(exp.description, lang)}
           </p>
           {exp.technologies.length > 0 && (
             <div class="mt-3 flex flex-wrap gap-2">

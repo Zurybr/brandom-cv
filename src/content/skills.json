@@ -1,6 +1,9 @@
 [
   {
-    "category": "AI & Orchestration",
+    "category": {
+      "en": "AI & Orchestration",
+      "es": "AI & Orquestación"
+    },
     "items": [
       "Agent Orchestration Patterns",
       "Prompt Engineering",
@@ -14,11 +17,17 @@
     ]
   },
   {
-    "category": "Languages",
+    "category": {
+      "en": "Languages",
+      "es": "Lenguajes"
+    },
     "items": ["Python", "TypeScript", "C#", "JavaScript", "SQL"]
   },
   {
-    "category": "Backend",
+    "category": {
+      "en": "Backend",
+      "es": "Backend"
+    },
     "items": [
       ".NET/.NET Core",
       "Django",
@@ -30,11 +39,17 @@
     ]
   },
   {
-    "category": "Frontend",
+    "category": {
+      "en": "Frontend",
+      "es": "Frontend"
+    },
     "items": ["React", "Next.js", "Angular 17", "Tailwind CSS"]
   },
   {
-    "category": "Infrastructure & Data",
+    "category": {
+      "en": "Infrastructure & Data",
+      "es": "Infraestructura & Datos"
+    },
     "items": [
       "SQL Server",
       "Oracle",
@@ -48,7 +63,10 @@
     ]
   },
   {
-    "category": "Methodologies",
+    "category": {
+      "en": "Methodologies",
+      "es": "Metodologías"
+    },
     "items": [
       "SDD",
       "AI-First Development",

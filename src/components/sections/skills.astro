@@ -2,8 +2,8 @@
 import type { SkillGroup } from '@/types'
 import type { Lang } from '@/i18n/ui'
 import SectionHeading from '@/components/ui/section-heading.astro'
-import Badge from '@/components/ui/badge.astro'
 import { useTranslations } from '@/i18n/utils'
+import { localizeText } from '@/types'
 
 interface Props {
   skills: SkillGroup[]
@@ -21,7 +21,7 @@ const t = useTranslations(lang)
       skills.map((group, gi) => (
         <div data-animate="fade-up" style={`animation-delay: ${gi * 100}ms`}>
           <h3 class="mb-3 text-lg font-semibold text-foreground">
-            {group.category}
+            {localizeText(group.category, lang)}
           </h3>
           <div data-stagger class="flex flex-wrap gap-2">
             {group.items.map((item, i) => (

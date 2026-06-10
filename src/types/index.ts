@@ -1,5 +1,10 @@
 type Bilingual = { en: string; es: string }
 
+export function localizeText(value: string | Bilingual, lang: string): string {
+  if (typeof value === 'string') return value
+  return value[lang as keyof Bilingual] || value.en
+}
+
 export interface Profile {
   name: string
   title: string | Bilingual
@@ -10,29 +15,24 @@ export interface Profile {
   resumeUrl: string
 }
 
-export function localizeText(value: string | Bilingual, lang: string): string {
-  if (typeof value === 'string') return value
-  return value[lang as keyof Bilingual] || value.en
-}
-
 export interface Experience {
-  company: string
-  role: string
-  period: string
-  description: string
+  company: string | Bilingual
+  role: string | Bilingual
+  period: string | Bilingual
+  description: string | Bilingual
   highlights?: string[]
   technologies: string[]
 }
 
 export interface Education {
   institution: string
-  degree: string
-  period: string
-  description: string
+  degree: string | Bilingual
+  period: string | Bilingual
+  description: string | Bilingual
 }
 
 export interface SkillGroup {
-  category: string
+  category: string | Bilingual
   items: string[]
 }
 

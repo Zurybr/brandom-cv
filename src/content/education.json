@@ -1,14 +1,29 @@
 [
   {
     "institution": "Instituto Politécnico Nacional (IPN)",
-    "degree": "Research – Center for Nanosciences and Micro/Nanotechnologies",
+    "degree": {
+      "en": "Research – Center for Nanosciences and Micro/Nanotechnologies",
+      "es": "Investigación – Centro de Nanociencias y Micro y Nanotecnologías"
+    },
     "period": "Jul 2017 – Jul 2020",
-    "description": "Mechanical stress research in atomic force microscopy. Implemented MATLAB simulations for calculating mechanical stress on cantilevers."
+    "description": {
+      "en": "Mechanical stress research in atomic force microscopy. Implemented MATLAB simulations for calculating mechanical stress on cantilevers.",
+      "es": "Investigación de esfuerzos mecánicos en microscopía de fuerza atómica. Implementé simulaciones en MATLAB para calcular esfuerzos mecánicos en cantilevers."
+    }
   },
   {
     "institution": "Universidad Politécnica del Valle de México (UPVM)",
-    "degree": "B.S. in Nanotechnology Engineering",
-    "period": "Graduated: 2021",
-    "description": "Continuous education through verified coursework (Platzi, Udemy) in AI & Agentic Architectures, Real-Time Distributed Systems, and Modern Full-Stack Infrastructures."
+    "degree": {
+      "en": "B.S. in Nanotechnology Engineering",
+      "es": "Ing. en Nanotecnología"
+    },
+    "period": {
+      "en": "Graduated: 2021",
+      "es": "Egresado: 2021"
+    },
+    "description": {
+      "en": "Continuous education through verified coursework (Platzi, Udemy) in AI & Agentic Architectures, Real-Time Distributed Systems, and Modern Full-Stack Infrastructures.",
+      "es": "Educación continua a través de cursos verificados (Platzi, Udemy) en Arquitecturas AI & Agentic, Sistemas Distribuidos en Tiempo Real e Infraestructuras Full-Stack Modernas."
+    }
   }
 ]

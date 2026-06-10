@@ -1,9 +1,18 @@
 [
   {
     "company": "Reumedika / Lefarma-Artricenter",
-    "role": "Principal AI Engineer",
-    "period": "Oct 2025 – Present",
-    "description": "Lead AI orchestration and multi-agent architecture design for healthcare systems. Architected event-driven cognitive pipelines integrating LLMs with structured data extraction and clinical workflows. Designed evaluation frameworks for AI-generated outputs in production environments with strict compliance requirements.",
+    "role": {
+      "en": "Principal AI Engineer",
+      "es": "Ingeniero AI Principal"
+    },
+    "period": {
+      "en": "Oct 2025 – Present",
+      "es": "Oct 2025 – Presente"
+    },
+    "description": {
+      "en": "Lead AI orchestration and multi-agent architecture design for healthcare systems. Architected event-driven cognitive pipelines integrating LLMs with structured data extraction and clinical workflows. Designed evaluation frameworks for AI-generated outputs in production environments with strict compliance requirements.",
+      "es": "Lideré orquestación de AI y diseño de arquitecturas multi-agente para sistemas de salud. Diseñé pipelines cognitivos event-driven integrando LLMs con extracción de datos estructurados y flujos clínicos. Diseñé frameworks de evaluación para outputs generados por AI en entornos de producción con requisitos estrictos de cumplimiento."
+    },
     "technologies": [
       "Python",
       "LangGraph",
@@ -15,9 +24,18 @@
   },
   {
     "company": "MILANO / DESICI",
-    "role": "Lead Developer / FullStack Consultant",
-    "period": "Sep 2023 – Oct 2025",
-    "description": "Led full-stack development of enterprise web applications for retail and logistics clients across Mexico. Designed and implemented microservice architectures with real-time event processing, REST APIs, and modern frontend interfaces. Mentored junior developers and established coding standards and CI/CD pipelines.",
+    "role": {
+      "en": "Lead Developer / FullStack Consultant",
+      "es": "Líder de Desarrollo / Consultor FullStack"
+    },
+    "period": {
+      "en": "Sep 2023 – Oct 2025",
+      "es": "Sep 2023 – Oct 2025"
+    },
+    "description": {
+      "en": "Led full-stack development of enterprise web applications for retail and logistics clients across Mexico. Designed and implemented microservice architectures with real-time event processing, REST APIs, and modern frontend interfaces. Mentored junior developers and established coding standards and CI/CD pipelines.",
+      "es": "Lideré desarrollo full-stack de aplicaciones web empresariales para clientes de retail y logística en México. Diseñé e implementé arquitecturas de microservicios con procesamiento de eventos en tiempo real, APIs REST e interfaces frontend modernas. Mentoricé desarrolladores junior y establecí estándares de código y pipelines CI/CD."
+    },
     "technologies": [
       "TypeScript",
       "Angular 17",
@@ -30,9 +48,18 @@
   },
   {
     "company": "DESICI",
-    "role": "FullStack Developer",
-    "period": "Dec 2020 – Sep 2023",
-    "description": "Developed and maintained web applications for enterprise clients in healthcare and logistics sectors. Built REST APIs, database schemas, and responsive frontends. Implemented data integration pipelines connecting Oracle, SQL Server, and BigQuery. Participated in architectural decisions and technology evaluations.",
+    "role": {
+      "en": "FullStack Developer",
+      "es": "Desarrollador FullStack"
+    },
+    "period": {
+      "en": "Dec 2020 – Sep 2023",
+      "es": "Dic 2020 – Sep 2023"
+    },
+    "description": {
+      "en": "Developed and maintained web applications for enterprise clients in healthcare and logistics sectors. Built REST APIs, database schemas, and responsive frontends. Implemented data integration pipelines connecting Oracle, SQL Server, and BigQuery. Participated in architectural decisions and technology evaluations.",
+      "es": "Desarrollé y mantuve aplicaciones web para clientes empresariales en los sectores de salud y logística. Construí APIs REST, esquemas de base de datos y frontends responsivos. Implementé pipelines de integración de datos conectando Oracle, SQL Server y BigQuery. Participé en decisiones arquitectónicas y evaluaciones de tecnología."
+    },
     "technologies": [
       "JavaScript",
       "C#",
@@ -45,14 +72,18 @@
   },
   {
     "company": "MTI",
-    "role": "Web Developer",
-    "period": "Oct 2021 – Feb 2022",
-    "description": "Built websites using React.js. Implemented authentication systems based on JWT and Cookies. Developed stored procedures and functions in SQL Server and PostgreSQL. Implemented changes across multiple CRMs designed in .NET.",
-    "highlights": [
-      "JWT & Cookie-based authentication",
-      "SQL Server & PostgreSQL stored procedures",
-      ".NET CRM implementations"
-    ],
+    "role": {
+      "en": "Web Developer",
+      "es": "Desarrollador Web"
+    },
+    "period": {
+      "en": "Oct 2021 – Feb 2022",
+      "es": "Oct 2021 – Feb 2022"
+    },
+    "description": {
+      "en": "Built websites using React.js. Implemented authentication systems based on JWT and Cookies. Developed stored procedures and functions in SQL Server and PostgreSQL. Implemented changes across multiple CRMs designed in .NET.",
+      "es": "Construí sitios web usando React.js. Implementé sistemas de autenticación basados en JWT y Cookies. Desarrollé procedimientos almacenados y funciones en SQL Server y PostgreSQL. Implementé cambios en múltiples CRMs diseñados en .NET."
+    },
     "technologies": [
       "React.js",
       "JWT",
@@ -63,14 +94,18 @@
   },
   {
     "company": "ironbit",
-    "role": "Web Developer",
-    "period": "Dec 2020 – Oct 2021",
-    "description": "Wrote modern, performant, maintainable code for client and internal projects across JavaScript, C#, and Python. Developed applications using jQuery and vanilla JS for API consumption. Applied MVC design patterns. Built Web Services and REST APIs based on .NET Core 3 and .NET Framework. Performed SQL Server database consulting and query optimization.",
-    "highlights": [
-      "REST APIs with .NET Core 3",
-      "MVC architecture patterns",
-      "Multi-language development (JS, C#, Python)"
-    ],
+    "role": {
+      "en": "Web Developer",
+      "es": "Desarrollador Web"
+    },
+    "period": {
+      "en": "Dec 2020 – Oct 2021",
+      "es": "Dic 2020 – Oct 2021"
+    },
+    "description": {
+      "en": "Wrote modern, performant, maintainable code for client and internal projects across JavaScript, C#, and Python. Developed applications using jQuery and vanilla JS for API consumption. Applied MVC design patterns. Built Web Services and REST APIs based on .NET Core 3 and .NET Framework. Performed SQL Server database consulting and query optimization.",
+      "es": "Escribí código moderno, performante y mantenible para proyectos de clientes e internos en JavaScript, C# y Python. Desarrollé aplicaciones usando jQuery y JS vanilla para consumo de APIs. Apliqué patrones de diseño MVC. Construí Web Services y APIs REST basados en .NET Core 3 y .NET Framework. Realicé consultoría de base de datos SQL Server y optimización de queries."
+    },
     "technologies": [
       "JavaScript",
       "C#",
@@ -82,15 +117,22 @@
     ]
   },
   {
-    "company": "Personal Projects",
-    "role": "Independent Developer",
-    "period": "2020 – Present",
-    "description": "Continuous learning and development of personal projects. Built full-stack applications using MVC and MVT patterns with Django, React, and .NET. Actively studying AI, deep learning, and emerging technologies.",
-    "highlights": [
-      "Django + React full-stack apps",
-      "MVC & MVT architecture patterns",
-      "AI & Deep Learning exploration"
-    ],
+    "company": {
+      "en": "Personal Projects",
+      "es": "Proyectos Personales"
+    },
+    "role": {
+      "en": "Independent Developer",
+      "es": "Desarrollador Independiente"
+    },
+    "period": {
+      "en": "2020 – Present",
+      "es": "2020 – Presente"
+    },
+    "description": {
+      "en": "Continuous learning and development of personal projects. Built full-stack applications using MVC and MVT patterns with Django, React, and .NET. Actively studying AI, deep learning, and emerging technologies.",
+      "es": "Aprendizaje continuo y desarrollo de proyectos personales. Construí aplicaciones full-stack usando patrones MVC y MVT con Django, React y .NET. Estudiando activamente AI, deep learning y tecnologías emergentes."
+    },
     "technologies": [
       "Django",
       "React",
@@ -99,14 +141,22 @@
     ]
   },
   {
-    "company": "IPN – Center for Nanosciences and Micro/Nanotechnologies",
-    "role": "Researcher",
-    "period": "Jul 2017 – Jul 2020",
-    "description": "Performed mechanical stress research in atomic force microscopy. Implemented MATLAB simulations for calculating mechanical stress on cantilevers.",
-    "highlights": [
-      "Atomic Force Microscopy research",
-      "MATLAB stress simulations"
-    ],
+    "company": {
+      "en": "IPN – Center for Nanosciences and Micro/Nanotechnologies",
+      "es": "IPN – Centro de Nanociencias y Micro y Nanotecnologías"
+    },
+    "role": {
+      "en": "Researcher",
+      "es": "Investigador"
+    },
+    "period": {
+      "en": "Jul 2017 – Jul 2020",
+      "es": "Jul 2017 – Jul 2020"
+    },
+    "description": {
+      "en": "Performed mechanical stress research in atomic force microscopy. Implemented MATLAB simulations for calculating mechanical stress on cantilevers.",
+      "es": "Realicé investigación de esfuerzos mecánicos en microscopía de fuerza atómica. Implementé simulaciones en MATLAB para calcular esfuerzos mecánicos en cantilevers."
+    },
     "technologies": [
       "MATLAB",
       "AFM",
