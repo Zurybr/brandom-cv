@@ -10,7 +10,7 @@ Andrej Karpathy acuñó "vibe coding" en febrero de 2025. Un año después, admi
 
 Este cambio tiene un nombre: **Spec-Driven Development (SDD)**. Y está transformando fundamentalmente cómo se construye software de producción.
 
-![Spec-Driven Development: de Kiro a Spec Kit y Tessl](/images/blog/spec-driven-development/hero.jpg)
+![De Vibe Coding a Spec-Driven Development](/images/blog/spec-driven-development/hero.jpg)
 
 ## El Problema del Vibe Coding
 
@@ -92,6 +92,8 @@ Traduce la spec en un plan de implementación técnico. Elige el tech stack, def
 
 Ejecuta el plan tarea por tarea. Cada tarea es lo suficientemente pequeña para verificarla independientemente. La spec es la fuente de verdad en todo momento.
 
+![Una app de fitness funcional construida con SDD en 4.5 horas](/images/blog/spec-driven-development/sdd-trainlytics-app.png)
+
 ### 5. Validar e Iterar
 
 Después de la implementación, valida contra la spec. Usa un patrón de agente adversarial: un agente implementa, un agente separado verifica. El implementor optimiza para completar la tarea; el verificador optimiza para encontrar fallos. Esta tensión produce mejores resultados.
@@ -104,7 +106,7 @@ Antes de saltar al siguiente feature, pausa. Revisa la constitución. Verifica s
 
 El [Spec Kit](https://github.com/github/spec-kit) de GitHub es la forma más práctica de empezar con SDD. Es un toolkit open source (111k+ estrellas, 30+ integraciones de agentes) que estructura todo el workflow SDD en tu proyecto.
 
-![Repositorio de GitHub Spec Kit](/images/blog/spec-driven-development/spec-kit-repo.png)
+![GitHub Spec Kit — el toolkit open source de SDD](/images/blog/spec-driven-development/spec-kit-logo.webp)
 
 ### Instalación
 
@@ -124,7 +126,7 @@ specify init . --integration claude
 
 Esto crea una carpeta `.specify/` con templates, scripts y archivos de comandos específicos del agente. Spec Kit soporta Claude Code, GitHub Copilot, Cursor, Codex CLI, Gemini, Kiro, opencode y más de 25 agentes adicionales.
 
-![Inicialización de Spec Kit y slash commands](/images/blog/spec-driven-development/spec-kit-workflow.png)
+![Spec Kit slash commands en Claude Code](/images/blog/spec-driven-development/spec-kit-commands.png)
 
 ### El Workflow de Slash Commands
 
@@ -207,7 +209,7 @@ Múltiples presets pueden apilarse con orden de prioridad. Los overrides locales
 
 Uno de los patrones más poderosos en SDD es asignar agentes separados para verificar el trabajo:
 
-![Patrón de agentes Coordinator, Implementor y Verifier](/images/blog/spec-driven-development/adversarial-pattern.png)
+![Patrón de agentes Coordinator, Implementor y Verifier](/images/blog/spec-driven-development/sdd-overview-spec-kit.png)
 
 1. Un **Coordinador** desglosa la spec y delega tareas.
 2. Sub-agentes **Implementores** trabajan desde sub-specs.
@@ -220,6 +222,8 @@ El tiering de modelos importa aquí: usa tu modelo más capaz para escribir spec
 ## Cuándo Usar SDD (Y Cuándo No)
 
 SDD tiene overhead. No toda tarea lo justifica.
+
+![¿Dónde se ubica SDD? Claridad del problema vs tamaño del problema](/images/blog/spec-driven-development/sdd-where-matrix.png)
 
 **Escribe una spec cuando:**
 - El trabajo abarca múltiples sesiones de agente
