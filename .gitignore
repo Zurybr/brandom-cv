@@ -36,6 +36,7 @@ yarn-error.log*
 .atl/
 .opencode/
 .specify/
+.superpowers/
 skills-lock.json
 CLAUDE.md
 AGENTS.md
