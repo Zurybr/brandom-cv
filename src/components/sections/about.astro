@@ -1,15 +1,19 @@
 ---
+import type { Lang } from '@/i18n/ui'
+import { useTranslations } from '@/i18n/utils'
 import SectionHeading from '@/components/ui/section-heading.astro'
 
 interface Props {
   summary: string
+  lang: Lang
 }
 
-const { summary } = Astro.props
+const { summary, lang } = Astro.props
+const t = useTranslations(lang)
 ---
 
 <section id="about" class="py-16">
-  <SectionHeading title="Sobre Mí" />
+  <SectionHeading title={t('section.about')} />
   <div data-animate="fade-up" class="mx-auto max-w-3xl text-center">
     <p class="text-lg leading-relaxed text-muted-foreground">
       {summary}

@@ -1,0 +1,27 @@
+---
+import { languages, type Lang } from '@/i18n/ui'
+import { getLangFromUrl, switchLocalePath } from '@/i18n/utils'
+
+const currentLang = getLangFromUrl(Astro.url)
+const currentUrl = Astro.url
+---
+
+<div class="flex items-center gap-1">
+  {
+    (Object.entries(languages) as [Lang, string][]).map(([lang, flag]) => (
+      <a
+        href={switchLocalePath(currentUrl, lang)}
+        class:list={[
+          'text-lg leading-none p-1 rounded transition-opacity',
+          currentLang === lang
+            ? 'opacity-100'
+            : 'opacity-50 hover:opacity-80',
+        ]}
+        aria-label={lang === 'en' ? 'English' : 'Español'}
+        title={lang === 'en' ? 'English' : 'Español'}
+      >
+        {flag}
+      </a>
+    ))
+  }
+</div>

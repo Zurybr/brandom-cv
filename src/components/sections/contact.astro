@@ -1,21 +1,25 @@
 ---
 import type { SocialLink } from '@/types'
+import type { Lang } from '@/i18n/ui'
 import SectionHeading from '@/components/ui/section-heading.astro'
 import IconLink from '@/components/ui/icon-link.astro'
+import { useTranslations } from '@/i18n/utils'
 
 interface Props {
   socialLinks: SocialLink[]
   email: string
+  lang: Lang
 }
 
-const { socialLinks, email } = Astro.props
+const { socialLinks, email, lang } = Astro.props
+const t = useTranslations(lang)
 ---
 
 <section id="contact" class="py-16">
-  <SectionHeading title="Contacto" subtitle="Conectemos" />
+  <SectionHeading title={t('section.contact')} subtitle={t('section.contact.subtitle')} />
   <div data-animate="fade-up" class="mx-auto max-w-3xl text-center">
     <p class="mb-6 text-muted-foreground">
-      ¿Interesado en colaborar? No dudes en contactarme.
+      {t('section.contact.text')}
     </p>
     <div class="flex flex-wrap justify-center gap-6">
       {

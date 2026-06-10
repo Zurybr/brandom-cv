@@ -1,5 +1,7 @@
 ---
 import PostCard from '@/components/blog/post-card.astro'
+import type { Lang } from '@/i18n/ui'
+import { useTranslations } from '@/i18n/utils'
 
 interface Props {
   posts: Array<{
@@ -10,20 +12,22 @@ interface Props {
     excerpt: string
     readingTime: string
   }>
+  lang: Lang
 }
 
-const { posts } = Astro.props
+const { posts, lang } = Astro.props
+const t = useTranslations(lang)
 ---
 
 {
   posts.length === 0 ? (
     <p class="py-12 text-center text-muted-foreground">
-      Aún no hay publicaciones.
+      {t('blog.empty')}
     </p>
   ) : (
     <div class="grid gap-6 sm:grid-cols-2">
       {posts.map((post) => (
-        <PostCard {...post} />
+        <PostCard {...post} lang={lang} />
       ))}
     </div>
   )

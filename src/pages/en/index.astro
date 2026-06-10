@@ -1,0 +1,54 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import Hero from '@/components/sections/hero.astro'
+import About from '@/components/sections/about.astro'
+import ExperienceSection from '@/components/sections/experience.astro'
+import EducationSection from '@/components/sections/education.astro'
+import Skills from '@/components/sections/skills.astro'
+import Projects from '@/components/sections/projects.astro'
+import Contact from '@/components/sections/contact.astro'
+
+import profileData from '@/content/profile.json'
+import experienceData from '@/content/experience.json'
+import educationData from '@/content/education.json'
+import skillsData from '@/content/skills.json'
+import projectsData from '@/content/projects.json'
+import socialLinksData from '@/content/social-links.json'
+
+import type {
+  Profile,
+  Experience,
+  Education,
+  SkillGroup,
+  Project,
+  SocialLink,
+} from '@/types'
+
+import type { Lang } from '@/i18n/ui'
+
+const lang: Lang = 'en'
+
+const profile = profileData as Profile
+const experience = experienceData as Experience[]
+const education = educationData as Education[]
+const skills = skillsData as SkillGroup[]
+const projects = projectsData as Project[]
+const socialLinks = socialLinksData as SocialLink[]
+---
+
+<Layout
+  title="Brandom Ledesma — Principal AI Engineer & Software Architect"
+  description="Software Architect and Nanotechnology Engineer focused on AI orchestration, multi-agent architectures, and production-grade software."
+  ogType="website"
+  lang={lang}
+>
+  <main class="mx-auto max-w-5xl px-4">
+    <Hero profile={profile} lang={lang} />
+    <About summary={profile.summary} lang={lang} />
+    <ExperienceSection experience={experience} lang={lang} />
+    <EducationSection education={education} lang={lang} />
+    <Skills skills={skills} lang={lang} />
+    <Projects projects={projects} lang={lang} />
+    <Contact socialLinks={socialLinks} email={profile.email} lang={lang} />
+  </main>
+</Layout>

@@ -1,6 +1,8 @@
 ---
 import Card from '@/components/ui/card.astro'
 import Badge from '@/components/ui/badge.astro'
+import type { Lang } from '@/i18n/ui'
+import { getLocalizedPath } from '@/i18n/utils'
 
 interface Props {
   slug: string
@@ -9,18 +11,23 @@ interface Props {
   category?: string
   excerpt: string
   readingTime: string
+  lang: Lang
 }
 
-const { slug, title, date, category, excerpt, readingTime } = Astro.props
+const { slug, title, date, category, excerpt, readingTime, lang } = Astro.props
 
-const formattedDate = new Date(date).toLocaleDateString('es-MX', {
+const locale = lang === 'es' ? 'es-MX' : 'en-US'
+
+const formattedDate = new Date(date).toLocaleDateString(locale, {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
 })
+
+const href = getLocalizedPath(`/blog/${slug}`, lang)
 ---
 
-<a href={`/blog/${slug}`} class="block">
+<a href={href} class="block">
   <Card className="h-full transition-colors hover:border-primary">
     <div class="flex items-center gap-3 text-sm text-muted-foreground">
       <time datetime={date}>{formattedDate}</time>

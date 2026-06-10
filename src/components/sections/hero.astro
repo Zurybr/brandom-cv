@@ -1,11 +1,15 @@
 ---
 import type { Profile } from '@/types'
+import type { Lang } from '@/i18n/ui'
+import { useTranslations } from '@/i18n/utils'
 
 interface Props {
   profile: Profile
+  lang: Lang
 }
 
-const { profile } = Astro.props
+const { profile, lang } = Astro.props
+const t = useTranslations(lang)
 ---
 
 <section
@@ -14,7 +18,7 @@ const { profile } = Astro.props
   <div id="hero-avatar-wrapper" class="avatar-wrapper" data-animate="scale-in" style="animation-delay: 0ms">
     <img
       src={profile.avatar}
-      alt={`Foto de ${profile.name}`}
+      alt={`${t('hero.photoAlt')} ${profile.name}`}
       width="200"
       height="200"
       class="avatar-image rounded-full border-4 border-primary object-cover"

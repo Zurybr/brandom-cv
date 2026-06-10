@@ -1,17 +1,21 @@
 ---
 import type { Education } from '@/types'
+import type { Lang } from '@/i18n/ui'
 import SectionHeading from '@/components/ui/section-heading.astro'
 import Card from '@/components/ui/card.astro'
+import { useTranslations } from '@/i18n/utils'
 
 interface Props {
   education: Education[]
+  lang: Lang
 }
 
-const { education } = Astro.props
+const { education, lang } = Astro.props
+const t = useTranslations(lang)
 ---
 
 <section id="education" class="py-16">
-  <SectionHeading title="Educación" />
+  <SectionHeading title={t('section.education')} />
   <div class="mx-auto max-w-3xl space-y-6">
     {
       education.map((edu, i) => (

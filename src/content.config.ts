@@ -9,6 +9,7 @@ const blog = defineCollection({
     date: z.coerce.date(),
     category: z.string().optional(),
     excerpt: z.string(),
+    lang: z.enum(['en', 'es']).default('en'),
   }),
 })
 

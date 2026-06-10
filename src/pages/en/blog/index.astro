@@ -3,26 +3,31 @@ import { getCollection } from 'astro:content'
 import Layout from '@/layouts/Layout.astro'
 import PostList from '@/components/blog/post-list.astro'
 import { computeReadingTime } from '@/lib/utils'
+import type { Lang } from '@/i18n/ui'
+
+const lang: Lang = 'en'
 
 const allPosts = await getCollection('blog')
 
 const posts = allPosts
+  .filter((post) => (post.data.lang || 'en') === lang)
   .sort(
     (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
   )
   .map((post) => ({
-    slug: post.id,
+    slug: post.id.replace(/-en$/, ''),
     title: post.data.title,
     date: post.data.date.toISOString(),
     category: post.data.category,
     excerpt: post.data.excerpt,
-    readingTime: computeReadingTime(post.body || ''),
+    readingTime: computeReadingTime(post.body || '', lang),
   }))
 ---
 
 <Layout
   title="Blog — Brandom Ledesma"
-  description="Artículos sobre desarrollo y tecnología."
+  description="Articles about development and technology."
+  lang={lang}
 >
   <main class="mx-auto max-w-5xl px-4 py-16">
     <h1
@@ -30,6 +35,6 @@ const posts = allPosts
     >
       Blog
     </h1>
-    <PostList posts={posts} />
+    <PostList posts={posts} lang={lang} />
   </main>
 </Layout>

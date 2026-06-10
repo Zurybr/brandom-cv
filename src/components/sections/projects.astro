@@ -1,23 +1,27 @@
 ---
 import type { Project } from '@/types'
+import type { Lang } from '@/i18n/ui'
 import SectionHeading from '@/components/ui/section-heading.astro'
 import Card from '@/components/ui/card.astro'
 import Badge from '@/components/ui/badge.astro'
 import IconLink from '@/components/ui/icon-link.astro'
+import { useTranslations } from '@/i18n/utils'
 
 interface Props {
   projects: Project[]
+  lang: Lang
 }
 
-const { projects } = Astro.props
+const { projects, lang } = Astro.props
+const t = useTranslations(lang)
 ---
 
 <section id="projects" class="py-16">
-  <SectionHeading title="Proyectos" />
+  <SectionHeading title={t('section.projects')} />
   {
     projects.length === 0 ? (
       <p class="text-center text-muted-foreground">
-        Próximamente más proyectos.
+        {t('section.projects.empty')}
       </p>
     ) : (
       <div class="mx-auto grid max-w-4xl gap-6 sm:grid-cols-2">
@@ -41,7 +45,7 @@ const { projects } = Astro.props
                   <IconLink
                     href={project.liveUrl}
                     icon="globe"
-                    label="Demo"
+                    label={t('section.projects.demo')}
                     external
                   />
                 )}
@@ -49,7 +53,7 @@ const { projects } = Astro.props
                   <IconLink
                     href={project.repoUrl}
                     icon="github"
-                    label="Código"
+                    label={t('section.projects.code')}
                     external
                   />
                 )}

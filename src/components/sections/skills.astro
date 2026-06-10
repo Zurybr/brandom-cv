@@ -1,17 +1,21 @@
 ---
 import type { SkillGroup } from '@/types'
+import type { Lang } from '@/i18n/ui'
 import SectionHeading from '@/components/ui/section-heading.astro'
 import Badge from '@/components/ui/badge.astro'
+import { useTranslations } from '@/i18n/utils'
 
 interface Props {
   skills: SkillGroup[]
+  lang: Lang
 }
 
-const { skills } = Astro.props
+const { skills, lang } = Astro.props
+const t = useTranslations(lang)
 ---
 
 <section id="skills" class="py-16">
-  <SectionHeading title="Habilidades" />
+  <SectionHeading title={t('section.skills')} />
   <div class="mx-auto max-w-4xl space-y-8">
     {
       skills.map((group, gi) => (

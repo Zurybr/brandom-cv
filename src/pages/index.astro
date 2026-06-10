@@ -1,49 +1,43 @@
 ---
 import Layout from '@/layouts/Layout.astro'
-import Hero from '@/components/sections/hero.astro'
-import About from '@/components/sections/about.astro'
-import ExperienceSection from '@/components/sections/experience.astro'
-import EducationSection from '@/components/sections/education.astro'
-import Skills from '@/components/sections/skills.astro'
-import Projects from '@/components/sections/projects.astro'
-import Contact from '@/components/sections/contact.astro'
+import { useTranslations } from '@/i18n/utils'
+import type { Lang } from '@/i18n/ui'
 
-import profileData from '@/content/profile.json'
-import experienceData from '@/content/experience.json'
-import educationData from '@/content/education.json'
-import skillsData from '@/content/skills.json'
-import projectsData from '@/content/projects.json'
-import socialLinksData from '@/content/social-links.json'
-
-import type {
-  Profile,
-  Experience,
-  Education,
-  SkillGroup,
-  Project,
-  SocialLink,
-} from '@/types'
-
-const profile = profileData as Profile
-const experience = experienceData as Experience[]
-const education = educationData as Education[]
-const skills = skillsData as SkillGroup[]
-const projects = projectsData as Project[]
-const socialLinks = socialLinksData as SocialLink[]
+const lang: Lang = 'en'
+const t = useTranslations(lang)
 ---
 
-<Layout
-  title="Brandom Ledesma — Principal AI Engineer & Software Architect"
-  description="Software Architect and Nanotechnology Engineer focused on AI orchestration, multi-agent architectures, and production-grade software."
-  ogType="website"
->
-  <main class="mx-auto max-w-5xl px-4">
-    <Hero profile={profile} />
-    <About summary={profile.summary} />
-    <ExperienceSection experience={experience} />
-    <EducationSection education={education} />
-    <Skills skills={skills} />
-    <Projects projects={projects} />
-    <Contact socialLinks={socialLinks} email={profile.email} />
-  </main>
-</Layout>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Brandom Ledesma — Portfolio</title>
+    <script is:inline>
+      ;(function () {
+        var lang = 'en'
+        var stored = localStorage.getItem('preferred-lang')
+        if (stored === 'es' || stored === 'en') {
+          lang = stored
+        } else {
+          var browserLang = (
+            navigator.language ||
+            navigator.userLanguage ||
+            'en'
+          )
+            .toLowerCase()
+            .substring(0, 2)
+          if (browserLang === 'es') {
+            lang = 'es'
+          }
+        }
+        window.location.replace('/' + lang + '/')
+      })()
+    </script>
+    <noscript>
+      <meta http-equiv="refresh" content="0;url=/en/" />
+    </noscript>
+  </head>
+  <body>
+    <p>Redirecting...</p>
+  </body>
+</html>

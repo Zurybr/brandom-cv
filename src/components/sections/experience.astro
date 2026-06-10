@@ -1,17 +1,21 @@
 ---
 import type { Experience } from '@/types'
+import type { Lang } from '@/i18n/ui'
 import SectionHeading from '@/components/ui/section-heading.astro'
 import Badge from '@/components/ui/badge.astro'
+import { useTranslations } from '@/i18n/utils'
 
 interface Props {
   experience: Experience[]
+  lang: Lang
 }
 
-const { experience } = Astro.props
+const { experience, lang } = Astro.props
+const t = useTranslations(lang)
 ---
 
 <section id="experience" class="py-16">
-  <SectionHeading title="Experiencia" />
+  <SectionHeading title={t('section.experience')} />
   <div class="mx-auto max-w-3xl space-y-8">
     {
       experience.map((exp, i) => (
