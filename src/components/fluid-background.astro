@@ -127,9 +127,14 @@
   });
   resizeObserver.observe(document.body);
 
-  // Animation loop
+  // Animation loop — accumulate time so reduced-motion freezes and resumes cleanly
+  let elapsedTime = 0;
+  let lastTimestamp = 0;
   renderer.setAnimationLoop((timestamp: number) => {
-    material.uniforms.uTime.value = (timestamp / 1000) * timeScale;
+    const delta = lastTimestamp ? (timestamp - lastTimestamp) / 1000 : 0;
+    lastTimestamp = timestamp;
+    elapsedTime += delta * timeScale;
+    material.uniforms.uTime.value = elapsedTime;
     renderer.render(scene, camera);
   });
 </script>
