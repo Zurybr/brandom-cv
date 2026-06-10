@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   site: 'https://zurybr.github.io',
+  base: '/brandom-cv',
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'es'],
