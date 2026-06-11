@@ -1,0 +1,62 @@
+---
+title: 'FrontierCode: El Primer Benchmark Que Mide Calidad de Código, No Solo Corrección'
+date: '2026-06-01'
+category: 'IA'
+excerpt: 'Cognition presenta FrontierCode, un benchmark construido por maintainers de open source que hace la pregunta real: ¿tu PR realmente se aprobaría? Incluso Claude Opus 4.8 obtiene solo 13.4% en Diamond.'
+lang: 'es'
+---
+
+Cognition, el equipo detrás de Devin, acaba de lanzar **FrontierCode** — y expone una verdad incómoda sobre los benchmarks de coding con IA.
+
+## La Corrección Es el Mínimo
+
+Los benchmarks existentes como SWE-Bench miden *corrección funcional*: ¿el patch hace que los tests pasen? Pero conforme el código generado por IA se convierte en la vía principal hacia producción, la corrección sola ya no basta. La pregunta real es: **¿un maintainer realmente aprobaría este PR?**
+
+FrontierCode es el primer benchmark que mide la *mergeability* del código — una evaluación holística que incluye corrección conductual, seguridad contra regresiones, calidad de tests, disciplina de alcance, limpieza mecánica y adherencia a convenciones del codebase.
+
+![Tasas de falsos positivos y falsos negativos por benchmark](/images/blog/frontier-code/false-positive-negative-rates.svg)
+
+Los resultados son reveladores. FrontierCode produce **81% menos errores de clasificación** que SWE-Bench Pro. Los benchmarks actuales rutinariamente recompensan soluciones incorrectas (falsos positivos) y penalizan soluciones válidas (falsos negativos).
+
+## Construido por Maintainers, No por Scrapers
+
+Lo que hace diferente a FrontierCode:
+
+- **20+ maintainers de open source** crearon tareas desde los repos que realmente mantienen (Celery, Budibase, Mattermost, uppy, y 32 más)
+- **40+ horas por tarea** — cada tarea pasó por múltiples rondas de iteración, hack reports, calibración y revisión
+- **36 repositorios insignia** abarcando C++, Python, TypeScript, Rust, Go y más — triple la diversidad de lenguajes de SWE-Bench Pro
+
+Los prompts son deliberadamente concisos — un tercio de la longitud de los de SWE-Bench Pro. El benchmark espera que los agentes infieran la intención del maintainer con el mismo contexto que tendría un contribuidor humano. Sin ayuda extra.
+
+![Distribución de longitud de prompts por benchmark](/images/blog/frontier-code/prompt-length.svg)
+
+## Los Resultados: Todos Luchan
+
+FrontierCode presenta tres niveles de dificultad: **Extended** (150 tareas), **Main** (100 más difíciles) y **Diamond** (50 más difíciles).
+
+| Modelo | Diamond | Main | Extended |
+|---|---|---|---|
+| Claude Opus 4.8 | 13.4% | 34.3% | 51.8% |
+| GPT-5.5 | 6.3% | — | — |
+| Gemini 3.1 Pro | 4.7% | — | — |
+| Kimi K2.6 (open source) | 3.8% | 16% | 37% |
+
+Diamond permanece sin saturar. El mejor modelo obtiene 13.4%. En las tareas más difíciles, los modelos frontier luchan con los requisitos sutiles que les importan a los maintainers: patrones de código idiomáticos, disciplina de alcance, y escribir tests que realmente capturen el comportamiento deseado.
+
+GPT-5.5 usa hasta 4x menos tokens que Opus 4.8, logrando un mejor tradeoff costo-inteligencia — pero sigue cayendo corto en los problemas más difíciles.
+
+## Métodos de Evaluación Novedosos
+
+FrontierCode va más allá de los unit tests con tres técnicas nuevas:
+
+**Reverse-Classical.** Los tests escritos por el agente se ejecutan contra el codebase *original con bugs*. Deben fallar. Esto asegura que el agente entendió el problema lo suficiente como para escribir un test significativo.
+
+**Code Scope.** Checks automatizados que enforcementan que los patches modifican solo lo necesario — sin refactors no relacionados, sin scope creep. Las restricciones cubren límites de archivos, tamaño de diff, e incluso localidad semántica dentro de un archivo.
+
+**Adaptive Classical Grading.** Las tareas abiertas tienen múltiples soluciones válidas. Los tests estáticos son demasiado rígidos. Cognition construyó `mutagent`, una herramienta que usa un LLM para alinear el entorno de testing con la implementación del agente, habilitando testing determinista sobre soluciones abiertas.
+
+## Qué Significa Esto
+
+FrontierCode establece un nuevo estándar. Revela que los modelos actuales pueden escribir código correcto, pero escribir *buen* código — código que respeta convenciones del codebase, ejerce disciplina de alcance y pasa el escrutinio de maintainers experimentados — sigue siendo un desafío abierto.
+
+El benchmark no se publicó públicamente para prevenir contaminación, pero Cognition está abriendo la evaluación a todos los creadores de modelos. Si tu modelo dice escribir código de producción, esta es la prueba a superar.

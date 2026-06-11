@@ -1,0 +1,62 @@
+---
+title: 'FrontierCode: The First Benchmark That Measures Code Quality, Not Just Correctness'
+date: '2026-06-01'
+category: 'AI'
+excerpt: 'Cognition introduces FrontierCode, a benchmark built by open-source maintainers that asks the real question: would your PR actually get merged? Even Claude Opus 4.8 scores only 13.4% on Diamond.'
+lang: 'en'
+---
+
+Cognition, the team behind Devin, just dropped **FrontierCode** — and it exposes a uncomfortable truth about AI coding benchmarks.
+
+## Correctness Is Table Stakes
+
+Existing benchmarks like SWE-Bench measure *functional correctness*: does the patch make the tests green? But as AI-generated code becomes the default path to production, correctness alone is no longer enough. The real question is: **would a maintainer actually merge this PR?**
+
+FrontierCode is the first benchmark to measure code *mergeability* — a holistic assessment that includes behavioral correctness, regression safety, test quality, scope discipline, mechanical cleanliness, and adherence to codebase conventions.
+
+![False positive and false negative rates by benchmark](/images/blog/frontier-code/false-positive-negative-rates.svg)
+
+The results are sobering. FrontierCode produces **81% fewer misclassification errors** than SWE-Bench Pro. Current benchmarks routinely reward incorrect solutions (false positives) and penalize valid ones (false negatives).
+
+## Built by Maintainers, Not Scrapers
+
+Here is what makes FrontierCode different:
+
+- **20+ open-source maintainers** crafted tasks from the repos they actually maintain (Celery, Budibase, Mattermost, uppy, and 32 others)
+- **40+ hours per task** — each task underwent multiple rounds of iteration, hack reports, calibration, and review
+- **36 flagship repositories** spanning C++, Python, TypeScript, Rust, Go, and more — triple the language diversity of SWE-Bench Pro
+
+The prompts are deliberately concise — a third the length of SWE-Bench Pro's. The benchmark expects agents to infer the maintainer's intent from the same context a human contributor would have. No hand-holding.
+
+![Prompt length distribution across benchmarks](/images/blog/frontier-code/prompt-length.svg)
+
+## The Results: Everyone Struggles
+
+FrontierCode presents three difficulty tiers: **Extended** (150 tasks), **Main** (100 hardest), and **Diamond** (50 hardest).
+
+| Model | Diamond | Main | Extended |
+|---|---|---|---|
+| Claude Opus 4.8 | 13.4% | 34.3% | 51.8% |
+| GPT-5.5 | 6.3% | — | — |
+| Gemini 3.1 Pro | 4.7% | — | — |
+| Kimi K2.6 (open source) | 3.8% | 16% | 37% |
+
+Diamond remains unsaturated. The best model scores 13.4%. On the hardest tasks, frontier models struggle with the subtle requirements that maintainers care about: idiomatic code patterns, scope discipline, and writing tests that actually capture the intended behavior.
+
+GPT-5.5 uses up to 4x fewer tokens than Opus 4.8, achieving a better cost-intelligence tradeoff — but still falls short on the hardest problems.
+
+## Novel Grading Methods
+
+FrontierCode goes beyond unit tests with three new techniques:
+
+**Reverse-Classical.** Agent-written tests are run against the *original, broken* codebase. They must fail. This ensures the agent understood the problem well enough to write a meaningful test.
+
+**Code Scope.** Automated checks enforce that patches modify only what they need to — no unrelated refactors, no scope creep. Constraints cover file boundaries, diff size, and even semantic locality within a file.
+
+**Adaptive Classical Grading.** Open-ended tasks have multiple valid solutions. Static tests are too rigid. Cognition built `mutagent`, a tool that uses an LLM to align the test environment with the agent's implementation, enabling deterministic testing on open-ended solutions.
+
+## What This Means
+
+FrontierCode sets a new bar. It reveals that today's models can write correct code, but writing *good* code — code that respects codebase conventions, exercises scope discipline, and passes the scrutiny of experienced maintainers — remains an open challenge.
+
+The benchmark is not publicly released to prevent contamination, but Cognition is opening evaluation to all model creators. If your model claims to write production code, this is the test to beat.
