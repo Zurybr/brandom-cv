@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "title": {
+      "en": "Virtual Arduino Simulator",
+      "es": "Simulador Virtual de Arduino"
+    },
+    "description": {
+      "en": "A fully interactive Arduino simulator running in the browser. Write code, wire circuits, and watch them come to life — no hardware required. Inspired by Tinkercad Circuits with a modern, real-time simulation engine.",
+      "es": "Un simulador de Arduino completamente interactivo que funciona en el navegador. Escribe código, conecta circuitos y obsérvalos cobrar vida — sin necesidad de hardware. Inspirado en Tinkercad Circuits con un motor de simulación moderno en tiempo real."
+    },
+    "image": "/images/projects/virtual-arduino.svg",
+    "technologies": ["Arduino", "WebAssembly", "TypeScript", "Canvas API", "C++"],
+    "repoUrl": "https://github.com/Zurybr/virtual-arduino",
+    "featured": true
+  }
+]

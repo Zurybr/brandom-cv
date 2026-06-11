@@ -11,6 +11,7 @@ export const ui = {
   en: {
     'nav.home': 'Home',
     'nav.blog': 'Blog',
+    'nav.news': 'News',
     'nav.menu.open': 'Open menu',
     'nav.menu.close': 'Close menu',
     'nav.main': 'Main navigation',
@@ -36,6 +37,7 @@ export const ui = {
   es: {
     'nav.home': 'Inicio',
     'nav.blog': 'Blog',
+    'nav.news': 'Noticias',
     'nav.menu.open': 'Abrir menú',
     'nav.menu.close': 'Cerrar menú',
     'nav.main': 'Navegación principal',

@@ -37,8 +37,8 @@ export interface SkillGroup {
 }
 
 export interface Project {
-  title: string
-  description: string
+  title: string | Bilingual
+  description: string | Bilingual
   image?: string
   technologies: string[]
   liveUrl?: string
