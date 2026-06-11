@@ -31,6 +31,7 @@ export const ui = {
     '404.description': "The page you're looking for doesn't exist or was moved.",
     '404.back': 'Back to home',
     'hero.photoAlt': 'Photo of',
+    'section.about.text': 'Curious by nature and driven by action. I am passionate about reading, continuous learning, and taking on challenges rooted in innovation and the implementation of emerging technologies. Every project is an opportunity to explore something new and push boundaries.',
   },
   es: {
     'nav.home': 'Inicio',
@@ -55,5 +56,6 @@ export const ui = {
     '404.description': 'La página que buscas no existe o fue movida.',
     '404.back': 'Volver al inicio',
     'hero.photoAlt': 'Foto de',
+    'section.about.text': 'Curioso por naturaleza y de acción. Me apasionan la lectura, el aprendizaje continuo y los retos basados en la innovación y la implementación de tecnologías emergentes. Cada proyecto es una oportunidad para explorar algo nuevo y romper límites.',
   },
 } as const
