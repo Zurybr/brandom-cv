@@ -12,9 +12,10 @@ interface Props {
   excerpt: string
   readingTime: string
   lang: Lang
+  section?: string
 }
 
-const { slug, title, date, category, excerpt, readingTime, lang } = Astro.props
+const { slug, title, date, category, excerpt, readingTime, lang, section = 'blog' } = Astro.props
 
 const locale = lang === 'es' ? 'es-MX' : 'en-US'
 
@@ -24,7 +25,7 @@ const formattedDate = new Date(date).toLocaleDateString(locale, {
   day: 'numeric',
 })
 
-const href = getLocalizedPath(`/blog/${slug}`, lang)
+const href = getLocalizedPath(`/${section}/${slug}`, lang)
 ---
 
 <a href={href} class="block">

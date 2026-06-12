@@ -13,9 +13,10 @@ interface Props {
     readingTime: string
   }>
   lang: Lang
+  section?: string
 }
 
-const { posts, lang } = Astro.props
+const { posts, lang, section = 'blog' } = Astro.props
 const t = useTranslations(lang)
 ---
 
@@ -27,7 +28,7 @@ const t = useTranslations(lang)
   ) : (
     <div class="grid gap-6 sm:grid-cols-2">
       {posts.map((post) => (
-        <PostCard {...post} lang={lang} />
+        <PostCard {...post} lang={lang} section={section} />
       ))}
     </div>
   )
