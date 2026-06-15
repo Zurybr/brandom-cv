@@ -12,5 +12,19 @@
     "technologies": ["Arduino", "WebAssembly", "TypeScript", "Canvas API", "C++"],
     "repoUrl": "https://github.com/Zurybr/virtual-arduino",
     "featured": true
+  },
+  {
+    "title": {
+      "en": "CodeWiki CLI",
+      "es": "CodeWiki CLI"
+    },
+    "description": {
+      "en": "A terminal tool to access Google CodeWiki — the Gemini AI-powered documentation platform for public GitHub repos. Outputs clean JSON/Markdown, integrates with AI agents like LettaBot and Claude Code.",
+      "es": "Una herramienta de terminal para acceder a Google CodeWiki — la plataforma de documentación generada con Gemini AI para repositorios públicos de GitHub. Devuelve JSON/Markdown limpio y se integra con agentes de IA como LettaBot y Claude Code."
+    },
+    "image": "/images/projects/codewiki-cli.svg",
+    "technologies": ["Node.js", "Python", "Puppeteer", "CLI", "AI Agents"],
+    "repoUrl": "https://github.com/Zurybr/codewiki-cli",
+    "featured": true
   }
 ]
