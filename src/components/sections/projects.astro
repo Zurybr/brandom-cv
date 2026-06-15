@@ -6,6 +6,7 @@ import SectionHeading from '@/components/ui/section-heading.astro'
 import Card from '@/components/ui/card.astro'
 import Badge from '@/components/ui/badge.astro'
 import IconLink from '@/components/ui/icon-link.astro'
+import BaseImg from '@/components/ui/base-img.astro'
 import { useTranslations } from '@/i18n/utils'
 
 interface Props {
@@ -31,7 +32,7 @@ const t = useTranslations(lang)
             <Card>
               {project.image && (
                 <div class="-mx-6 -mt-6 mb-4 overflow-hidden rounded-t-lg">
-                  <img
+                  <BaseImg
                     src={project.image}
                     alt={localizeText(project.title, lang)}
                     class="w-full object-cover"
