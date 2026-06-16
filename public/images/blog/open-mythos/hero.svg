@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1260" viewBox="0 0 2400 1260" role="img" aria-label="OpenMythos — recurrent-depth transformer architecture">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="75%">
+      <stop offset="0%" stop-color="#15213a"/>
+      <stop offset="55%" stop-color="#0c1322"/>
+      <stop offset="100%" stop-color="#070b14"/>
+    </radialGradient>
+    <linearGradient id="loop" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d98a3a"/>
+      <stop offset="100%" stop-color="#e0c068"/>
+    </linearGradient>
+    <linearGradient id="stage" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3b4a66"/>
+      <stop offset="100%" stop-color="#222c40"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="2400" height="1260" fill="url(#bg)"/>
+
+  <!-- faint grid -->
+  <g stroke="#1b2740" stroke-width="1.5" opacity="0.5">
+    <path d="M0 210 H2400 M0 420 H2400 M0 630 H2400 M0 840 H2400 M0 1050 H2400"/>
+    <path d="M300 0 V1260 M700 0 V1260 M1100 0 V1260 M1500 0 V1260 M1900 0 V1260"/>
+  </g>
+
+  <!-- recurrency orbits -->
+  <g fill="none" stroke="url(#loop)" stroke-width="6" opacity="0.85" filter="url(#glow)" transform="translate(1200 560)">
+    <ellipse rx="360" ry="150" transform="rotate(-18)"/>
+    <ellipse rx="300" ry="124" transform="rotate(-18)" opacity="0.65"/>
+    <ellipse rx="240" ry="98"  transform="rotate(-18)" opacity="0.45"/>
+    <circle r="26" fill="url(#loop)" stroke="none"/>
+  </g>
+  <!-- loop arrows -->
+  <g fill="none" stroke="#e0c068" stroke-width="5" opacity="0.9">
+    <path d="M1560 612 a360 150 -18 0 1 -84 92" stroke-linecap="round"/>
+    <polygon points="1474 706, 1502 700, 1484 722" fill="#e0c068" stroke="none"/>
+  </g>
+
+  <!-- three-stage pipeline: Prelude -> Recurrent -> Coda -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" text-rendering="geometricPrecision">
+    <g transform="translate(360 540)">
+      <rect width="380" height="150" rx="16" fill="url(#stage)" stroke="#3a4862" stroke-width="3"/>
+      <text x="190" y="70" text-anchor="middle" fill="#9fb2d2" font-size="40" font-weight="700">PRELUDE</text>
+      <text x="190" y="112" text-anchor="middle" fill="#64748f" font-size="26">run once</text>
+    </g>
+    <g transform="translate(1010 540)">
+      <rect width="380" height="150" rx="16" fill="none" stroke="#d98a3a" stroke-width="4" stroke-dasharray="14 12"/>
+      <text x="190" y="70" text-anchor="middle" fill="#e0c068" font-size="40" font-weight="700">RECURRENT</text>
+      <text x="190" y="112" text-anchor="middle" fill="#b58a3e" font-size="26">loop · h&#x209C;&#x208A;&#x2081; = A·h&#x209C; + B·e</text>
+    </g>
+    <g transform="translate(1660 540)">
+      <rect width="380" height="150" rx="16" fill="url(#stage)" stroke="#3a4862" stroke-width="3"/>
+      <text x="190" y="70" text-anchor="middle" fill="#9fb2d2" font-size="40" font-weight="700">CODA</text>
+      <text x="190" y="112" text-anchor="middle" fill="#64748f" font-size="26">run once</text>
+    </g>
+    <!-- connectors -->
+    <g stroke="#46577a" stroke-width="6" fill="none" stroke-linecap="round">
+      <path d="M740 615 H1010"/>
+      <path d="M1390 615 H1660"/>
+    </g>
+    <polygon points="1000 605, 1000 625, 1014 615" fill="#46577a"/>
+    <polygon points="1650 605, 1650 625, 1664 615" fill="#46577a"/>
+  </g>
+
+  <!-- title block -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" text-rendering="geometricPrecision">
+    <text x="360" y="300" fill="#f8fafc" font-size="118" font-weight="800" letter-spacing="-2">OpenMythos</text>
+    <text x="368" y="372" fill="#94a3b8" font-size="40">Recurrent-Depth Transformer · theoretical reconstruction</text>
+  </g>
+
+  <!-- footer chips -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="30" text-rendering="geometricPrecision">
+    <g transform="translate(360 900)">
+      <rect width="300" height="70" rx="35" fill="none" stroke="#334155" stroke-width="3"/>
+      <text x="150" y="46" text-anchor="middle" fill="#94a3b8">&#961;(A) &lt; 1  ·  LTI-stable</text>
+    </g>
+    <g transform="translate(690 900)">
+      <rect width="220" height="70" rx="35" fill="none" stroke="#334155" stroke-width="3"/>
+      <text x="110" y="46" text-anchor="middle" fill="#94a3b8">MoE · GQA / MLA</text>
+    </g>
+    <g transform="translate(940 900)">
+      <rect width="240" height="70" rx="35" fill="none" stroke="#334155" stroke-width="3"/>
+      <text x="120" y="46" text-anchor="middle" fill="#94a3b8">latent CoT · 1B&#x2013;1T</text>
+    </g>
+  </g>
+</svg>
