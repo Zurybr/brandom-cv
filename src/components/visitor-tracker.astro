@@ -1,17 +1,18 @@
 ---
 // VisitorTracker — privacy-safe, fire-and-forget page view recorder.
-// Uses native fetch (no client bundle bloat). Only the publishable anon key
-// is exposed; service_role stays server-side. Runs once per page load.
-// Records: path, locale, device, browser, os, geo (country/city via ipwho.is),
-// utm, and time-on-page (duration via record_duration rpc on pagehide).
+// Calls the `track` edge function, which resolves geo (country/city/ip_hash)
+// SERVER-SIDE from the client IP — works for adblocker/VPN users, unlike
+// client-side geo APIs. The browser never calls a third-party geo domain, so
+// adblockers don't block it. Only the publishable anon key is exposed.
 const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL
 const SUPABASE_ANON_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '') // '/brandom-cv'
+const FN_URL = SUPABASE_URL + '/functions/v1/track'
 ---
 
-<script is:inline define:vars={{ SUPABASE_URL, SUPABASE_ANON_KEY, BASE }}>
-  ;(async function () {
-    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return
+<script is:inline define:vars={{ FN_URL, SUPABASE_URL, SUPABASE_ANON_KEY, BASE }}>
+  ;(function () {
+    if (!FN_URL || !SUPABASE_ANON_KEY) return
     if (window.__vt) return
     window.__vt = 1
     if (navigator.webdriver) return
@@ -52,21 +53,7 @@ const BASE = import.meta.env.BASE_URL.replace(/\/$/, '') // '/brandom-cv'
       : null
 
     const q = new URLSearchParams(location.search)
-    const utm = {
-      utm_source: q.get('utm_source'),
-      utm_medium: q.get('utm_medium'),
-      utm_campaign: q.get('utm_campaign'),
-      utm_term: q.get('utm_term'),
-      utm_content: q.get('utm_content'),
-    }
-    for (const k in utm) if (!utm[k]) utm[k] = null
-
-    const common = {
-      language: navigator.language || null,
-      timezone: (Intl.DateTimeFormat().resolvedOptions().timeZone) || null,
-    }
-    const colorScheme =
-      window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    const utm = (k) => q.get(k) || null
 
     const headers = {
       apikey: SUPABASE_ANON_KEY,
@@ -74,71 +61,39 @@ const BASE = import.meta.env.BASE_URL.replace(/\/$/, '') // '/brandom-cv'
       'Content-Type': 'application/json',
     }
 
-    // geo: free HTTPS lookup, no key. 2.5s timeout so a slow/down service
-    // never blocks the page view (we proceed with null geo instead).
-    const geo = { country_code: null, city: null }
-    try {
-      const r = await Promise.race([
-        fetch('https://ipwho.is/').then((x) => x.json()),
-        new Promise((_, rej) => setTimeout(rej, 2500)),
-      ])
-      if (r && r.success) {
-        geo.country_code = r.country_code || null
-        geo.city = r.city || null
-      }
-    } catch { /* keep nulls */ }
-
-    // 1) page view — always
-    fetch(SUPABASE_URL + '/rest/v1/page_views', {
+    // one POST to the edge function: it resolves geo server-side and inserts
+    // page_views (+ visitor_sessions on first touch) with the service_role.
+    fetch(FN_URL, {
       method: 'POST',
       headers: headers,
       keepalive: true,
-      body: JSON.stringify(Object.assign(
-        {
-          path: p,
-          locale: locale,
-          referrer: document.referrer || null,
-          device_type: device,
-          browser: browser,
-          os: os,
-          country_code: geo.country_code,
-          city: geo.city,
-          screen_width: window.screen && screen.width,
-          screen_height: window.screen && screen.height,
-          viewport_width: window.innerWidth,
-          viewport_height: window.innerHeight,
-          session_id: sid,
-          user_agent: ua,
-          color_scheme: colorScheme,
-        },
-        common, utm
-      )),
+      body: JSON.stringify({
+        is_new: isNew,
+        path: p,
+        locale: locale,
+        referrer: document.referrer || null,
+        session_id: sid,
+        device_type: device,
+        browser: browser,
+        os: os,
+        user_agent: ua,
+        screen_width: window.screen && screen.width,
+        screen_height: window.screen && screen.height,
+        viewport_width: window.innerWidth,
+        viewport_height: window.innerHeight,
+        color_scheme:
+          window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+        language: navigator.language || null,
+        timezone: (Intl.DateTimeFormat().resolvedOptions().timeZone) || null,
+        utm_source: utm('utm_source'),
+        utm_medium: utm('utm_medium'),
+        utm_campaign: utm('utm_campaign'),
+        utm_term: utm('utm_term'),
+        utm_content: utm('utm_content'),
+      }),
     }).catch(function () {})
 
-    // 2) visitor session — first touch only
-    if (isNew) {
-      fetch(SUPABASE_URL + '/rest/v1/visitor_sessions', {
-        method: 'POST',
-        headers: headers,
-        keepalive: true,
-        body: JSON.stringify(Object.assign(
-          {
-            session_id: sid,
-            entry_page: p,
-            referrer: document.referrer || null,
-            device_type: device,
-            browser: browser,
-            os: os,
-            country_code: geo.country_code,
-            city: geo.city,
-          },
-          common,
-          { utm_source: utm.utm_source, utm_medium: utm.utm_medium, utm_campaign: utm.utm_campaign }
-        )),
-      }).catch(function () {})
-    }
-
-    // 3) time-on-page — fire once when leaving; rpc updates duration_ms
+    // time-on-page — fire once when leaving; rpc updates duration_ms
     const enter = performance.now()
     function sendDuration () {
       if (window.__vtSent) return
