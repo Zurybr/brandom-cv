@@ -1,0 +1,159 @@
+---
+// VisitorTracker — privacy-safe, fire-and-forget page view recorder.
+// Uses native fetch (no client bundle bloat). Only the publishable anon key
+// is exposed; service_role stays server-side. Runs once per page load.
+// Records: path, locale, device, browser, os, geo (country/city via ipwho.is),
+// utm, and time-on-page (duration via record_duration rpc on pagehide).
+const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL
+const SUPABASE_ANON_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, '') // '/brandom-cv'
+---
+
+<script is:inline define:vars={{ SUPABASE_URL, SUPABASE_ANON_KEY, BASE }}>
+  ;(async function () {
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return
+    if (window.__vt) return
+    window.__vt = 1
+    if (navigator.webdriver) return
+
+    const SID_KEY = 'vt_sid'
+    let sid = sessionStorage.getItem(SID_KEY)
+    const isNew = !sid
+    if (!sid) {
+      sid = (crypto.randomUUID && crypto.randomUUID()) ||
+        'xxxxxxxx'.replace(/x/g, function () { return ((Math.random() * 16) | 0).toString(16) }) + Date.now().toString(16)
+      sessionStorage.setItem(SID_KEY, sid)
+    }
+
+    let p = location.pathname
+    if (BASE && p.indexOf(BASE) === 0) p = p.slice(BASE.length)
+    if (!p || p[0] !== '/') p = '/' + p
+
+    const m = p.match(/^\/(en|es)(\/|$)/)
+    const locale = m ? m[1] : 'en'
+
+    const ua = navigator.userAgent || ''
+    const device =
+      /tablet|ipad/i.test(ua) ? 'tablet'
+      : /mobi|android|iphone/i.test(ua) ? 'mobile'
+      : 'desktop'
+    const browser =
+      /firefox\//i.test(ua) ? 'Firefox'
+      : /edg\//i.test(ua) ? 'Edge'
+      : /chrome\//i.test(ua) ? 'Chrome'
+      : /safari\//i.test(ua) ? 'Safari'
+      : null
+    const os =
+      /windows/i.test(ua) ? 'Windows'
+      : /iphone|ipad|ipod/i.test(ua) ? 'iOS'
+      : /android/i.test(ua) ? 'Android'
+      : /mac os/i.test(ua) ? 'macOS'
+      : /linux/i.test(ua) ? 'Linux'
+      : null
+
+    const q = new URLSearchParams(location.search)
+    const utm = {
+      utm_source: q.get('utm_source'),
+      utm_medium: q.get('utm_medium'),
+      utm_campaign: q.get('utm_campaign'),
+      utm_term: q.get('utm_term'),
+      utm_content: q.get('utm_content'),
+    }
+    for (const k in utm) if (!utm[k]) utm[k] = null
+
+    const common = {
+      language: navigator.language || null,
+      timezone: (Intl.DateTimeFormat().resolvedOptions().timeZone) || null,
+      color_scheme:
+        window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+    }
+
+    const headers = {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: 'Bearer ' + SUPABASE_ANON_KEY,
+      'Content-Type': 'application/json',
+    }
+
+    // geo: free HTTPS lookup, no key. 2.5s timeout so a slow/down service
+    // never blocks the page view (we proceed with null geo instead).
+    const geo = { country_code: null, city: null }
+    try {
+      const r = await Promise.race([
+        fetch('https://ipwho.is/').then((x) => x.json()),
+        new Promise((_, rej) => setTimeout(rej, 2500)),
+      ])
+      if (r && r.success) {
+        geo.country_code = r.country_code || null
+        geo.city = r.city || null
+      }
+    } catch { /* keep nulls */ }
+
+    // 1) page view — always
+    fetch(SUPABASE_URL + '/rest/v1/page_views', {
+      method: 'POST',
+      headers: headers,
+      keepalive: true,
+      body: JSON.stringify(Object.assign(
+        {
+          path: p,
+          locale: locale,
+          referrer: document.referrer || null,
+          device_type: device,
+          browser: browser,
+          os: os,
+          country_code: geo.country_code,
+          city: geo.city,
+          screen_width: window.screen && screen.width,
+          screen_height: window.screen && screen.height,
+          viewport_width: window.innerWidth,
+          viewport_height: window.innerHeight,
+          session_id: sid,
+          user_agent: ua,
+        },
+        common, utm
+      )),
+    }).catch(function () {})
+
+    // 2) visitor session — first touch only
+    if (isNew) {
+      fetch(SUPABASE_URL + '/rest/v1/visitor_sessions', {
+        method: 'POST',
+        headers: headers,
+        keepalive: true,
+        body: JSON.stringify(Object.assign(
+          {
+            session_id: sid,
+            entry_page: p,
+            referrer: document.referrer || null,
+            device_type: device,
+            browser: browser,
+            os: os,
+            country_code: geo.country_code,
+            city: geo.city,
+          },
+          common,
+          { utm_source: utm.utm_source, utm_medium: utm.utm_medium, utm_campaign: utm.utm_campaign }
+        )),
+      }).catch(function () {})
+    }
+
+    // 3) time-on-page — fire once when leaving; rpc updates duration_ms
+    const enter = performance.now()
+    function sendDuration () {
+      if (window.__vtSent) return
+      window.__vtSent = 1
+      const ms = Math.round(performance.now() - enter)
+      if (ms < 1000) return
+      fetch(SUPABASE_URL + '/rest/v1/rpc/record_duration', {
+        method: 'POST',
+        headers: headers,
+        keepalive: true,
+        body: JSON.stringify({ p_session: sid, p_path: p, p_ms: ms }),
+      }).catch(function () {})
+    }
+    addEventListener('pagehide', sendDuration)
+    addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') sendDuration()
+    })
+  })()
+</script>
