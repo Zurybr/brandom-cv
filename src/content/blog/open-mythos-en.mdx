@@ -1,0 +1,146 @@
+---
+title: 'OpenMythos: Reverse-Engineering the Mythos Architecture in the Open'
+date: '2026-06-15'
+category: 'AI'
+excerpt: 'A community-driven theoretical reconstruction of the Claude Mythos architecture built from public research. A practical look at recurrent-depth transformers, LTI-stable injection, and what looped compute means for production LLMs.'
+lang: 'en'
+---
+
+![OpenMythos](/images/blog/open-mythos/hero.jpg)
+
+A few weeks after the Fable 5 / Mythos 5 launch, the open-source community did what it always does: it tried to rebuild the thing from first principles. The result is [OpenMythos](https://github.com/kyegomez/OpenMythos) — an independent, MIT-licensed **theoretical reconstruction** of the suspected Claude Mythos architecture. To be clear from the start: it is *not* affiliated with or endorsed by Anthropic. It is a hypothesis in code, assembled entirely from public research literature and the observable behavior of the model.
+
+That disclaimer matters. As an engineer, the distinction between "this is what Mythos is" and "this is a self-consistent model that explains what Mythos *does*" is the whole game. OpenMythos is the latter — and it's a fascinating piece of work regardless.
+
+## The Central Hypothesis: Recurrent-Depth Transformers
+
+The core claim behind OpenMythos is that Mythos is a **Recurrent-Depth Transformer (RDT)**, also called a Looped Transformer. Instead of stacking hundreds of unique layers, you take a subset of layers and run them through multiple times per forward pass. Same weights. More loops. Deeper reasoning.
+
+This is *not* chain-of-thought. There is no intermediate token output. All of the reasoning happens **silently, inside a single forward pass**, in continuous latent space.
+
+The architecture splits layers into three functional blocks:
+
+```
+Input
+  ↓
+[Prelude P]         — standard transformer layers, run once
+  ↓
+[Recurrent Block R] — looped T times
+  ↑_______↓           (hidden state h updated each loop with input injection e)
+  ↓
+[Coda C]            — standard transformer layers, run once
+  ↓
+Output
+```
+
+The update rule at each loop step `t` is the heart of the design:
+
+```
+h_{t+1} = A·h_t + B·e + Transformer(h_t, e)
+```
+
+Where `h_t` is the hidden state after loop `t`, `e` is the encoded input from the Prelude **injected at every loop**, and `A`, `B` are learned injection parameters. That constant re-injection of `e` is what stops the model from drifting — it keeps the original input signal alive through the full recurrence depth.
+
+## Why This Architecture Explains Mythos
+
+This is the part that converted me from skeptical to "okay, this is at least plausible." OpenMythos ties four observable Mythos behaviors to specific mechanisms:
+
+**1. Systematic generalization.** Vanilla transformers struggle to combine knowledge in ways they never saw during training. Looped transformers pass this test via a three-stage grokking process — memorization, in-distribution generalization, then a sudden phase transition into systematic generalization on novel compositions. That maps to the qualitative jump Mythos shows on genuinely new questions.
+
+**2. Depth extrapolation.** Train on 5-hop reasoning chains, test on 10-hop. Vanilla fails; looped succeeds by running more inference-time loops. More loops at inference = deeper reasoning chains = harder problems solved, without retraining.
+
+**3. Latent thoughts as implicit chain-of-thought.** Each loop iteration is functionally equivalent to one CoT step, but in continuous latent space rather than token space. This has been formally proven (Saunshi et al., 2025). The kicker: continuous latent thoughts can encode *multiple alternative next steps simultaneously* — closer to breadth-first search over the reasoning space than a single committed path.
+
+**4. No parameter explosion.** A looped model with `k` layers run `L` times approaches the quality of a `kL`-layer non-looped model, with only `k` layers of parameters. Memory footprint does not grow with reasoning depth. Inference compute scales with loop count, not model size.
+
+## The Stability Problem — and the LTI Fix
+
+Here is where most "let's just loop the layers" projects die. Training looped models is notoriously unstable. Two failure modes dominate: the hidden state `h_t` grows unboundedly across loops (residual explosion), and training diverges from large spectral norms in the injection parameters (loss spikes).
+
+OpenMythos adopts the **Parcae** approach (Prairie et al., 2026), which recasts looping as a discrete Linear Time-Invariant (LTI) dynamical system over the residual stream. Ignoring the nonlinear Transformer term, the recurrence is:
+
+```
+h_{t+1} = A·h_t + B·e
+```
+
+Stability is governed entirely by the **spectral radius** of `A`:
+
+- `ρ(A) < 1` → stable, convergent
+- `ρ(A) ≥ 1` → unstable, divergent
+
+The fix is to constrain `A` *by construction* so stability is guaranteed: parameterize it as a continuous negative diagonal matrix, discretize with ZOH/Euler schemes (`A_discrete = exp(Δt · A_continuous)`), and enforce negativity via `A := Diag(-exp(log_A))`. The result is `ρ(A) < 1` regardless of learning rate or batch noise. The library even exposes a one-liner to verify it:
+
+```python
+A = model.recurrent.injection.get_A()
+rho = torch.linalg.eigvals(A).abs().max().item()
+print(f"Spectral radius ρ(A) = {rho:.4f} (must be < 1)")
+```
+
+This is the single most important idea in the project. Without it, the looped architecture is a curiosity. With it, it becomes trainable at scale.
+
+## Mixture of Experts for Breadth
+
+Looping explains Mythos's *depth* — iterative composition on a single problem. It does not explain the *breadth* of handling code, math, literature, science, and law with the same weights. OpenMythos suspects the FFN inside the Recurrent Block is a fine-grained **Mixture of Experts (MoE)**: many small experts, a top-m router per token, plus a handful of always-on **shared experts** to absorb common cross-domain knowledge.
+
+The elegant part: as `h_t` evolves across loops, the router can select different expert subsets at each depth, making every loop computationally distinct despite shared weights. If the activation ratio is around 5%, Mythos could hold hundreds of billions of total parameters while activating only a small fraction per token. The disclosed "parameter count" would be a storage number, not a compute number.
+
+## Scaling Laws — Half the Parameters for the Same Quality
+
+Parcae establishes the first predictable scaling laws for looped training:
+
+- **Training:** for a fixed FLOP budget with fixed parameters, increasing mean recurrence and reducing token count yields lower loss than minimal loops on more data. Both optimal recurrence and optimal tokens follow power laws with consistent exponents across scales.
+- **Inference:** more test-time loops improves quality on a **predictable, saturating exponential decay** — real but diminishing gains, mirroring inference-time CoT scaling.
+
+The headline number: at 770M parameters, a looped model matches the downstream quality of a 1.3B fixed-depth transformer on the same data. Roughly **half the parameters for the same quality**. Applied at Mythos scale, a large fraction of its apparent capability may come from loop depth rather than raw parameter count.
+
+## Using It In Practice
+
+Installation is a single command, and pre-configured variants run from 1B to 1T parameters:
+
+```bash
+pip install open-mythos
+```
+
+```python
+from open_mythos import mythos_7b, OpenMythos
+
+cfg = mythos_7b()
+model = OpenMythos(cfg)
+
+total = sum(p.numel() for p in model.parameters())
+print(f"Parameters: {total:,}")
+```
+
+| Variant | `dim` | Experts | Loop iters | Context | Max output |
+|---------|-------|---------|------------|---------|------------|
+| `mythos_1b` | 2048 | 64 | 16 | 4k | 4k |
+| `mythos_10b` | 4096 | 128 | 24 | 8k | 4k |
+| `mythos_100b` | 8192 | 256 | 32 | 1M | 128k |
+| `mythos_1t` | 16384 | 512 | 64 | 1M | 128k |
+
+Attention is switchable via `cfg.attn_type`: `"gqa"` (Grouped Query Attention with optional Flash Attention 2) or `"mla"` (Multi-Latent Attention from DeepSeek-V2, which caches a compressed KV latent rather than full K/V). The training script targets 30B tokens on FineWeb-Edu with Chinchilla-adjusted budgets for the looped architecture, and supports DDP via `torchrun` out of the box.
+
+## What I'd Flag Before You Build On It
+
+A few honest caveats, because the README is doing a lot of "is" when it should be doing "might be":
+
+- **It is a hypothesis, not a leak.** Nothing here confirms what Anthropic actually shipped. "Mythos probably is an RDT" is a strong, self-consistent theory — not a fact. Treat the architecture as a compelling research direction, not a spec.
+- **The references are frontier and some are pre-prints.** Parcae, Hyperloop, LT2, and several cited arxiv IDs are bleeding-edge (or speculative). Reproduce before you trust the scaling-law numbers in production.
+- **Loop count is not free.** More loops is not always better — beyond a depth, recurrence degrades predictions (the "overthinking" failure mode). Any real deployment needs an Adaptive Computation Time (ACT) halting mechanism, which OpenMythos discusses but you must wire up yourself.
+- **Memorization trades against reasoning.** Looping is structurally biased toward composition over rote recall. If your workload is factual retrieval, this architecture can hurt more than it helps.
+
+## What This Means
+
+Three takeaways for anyone shipping production LLM features:
+
+1. **Inference-time compute is becoming a first-class design axis.** Looping lets you trade parameters for compute at runtime — more loops for harder problems, fewer for easy ones. That is a fundamentally different cost model than fixed-depth transformers, and it changes how you should think about latency budgets.
+
+2. **The open-source frontier can now *theorize* about frontier labs.** A year ago, the community reverse-engineered APIs. Now it reverse-engineers *architectures* from behavioral evidence and published math. That is a meaningful shift in how the field iterates.
+
+3. **Stability constraints are the unlock, not the loop itself.** The loop idea is old (Universal Transformers, 2018). The contribution that makes it viable at scale is the LTI spectral-radius constraint. When you read these papers, pay attention to the dynamical-systems analysis — that is where the real engineering lives.
+
+OpenMythos is worth your time even if you never train a model with it. Read it as a guided tour of where the research community thinks frontier reasoning models are going — and as a reminder that the most interesting ideas in this space are increasingly being worked out in public.
+
+---
+
+*Source: [OpenMythos — GitHub](https://github.com/kyegomez/OpenMythos). See also my earlier analysis of [Claude Fable 5 and Mythos 5](/blog/claude-fable-mythos-en).*

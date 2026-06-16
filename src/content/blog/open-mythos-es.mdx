@@ -1,0 +1,146 @@
+---
+title: 'OpenMythos: Ingeniería Inversa de la Arquitectura Mythos en Abierto'
+date: '2026-06-15'
+category: 'IA'
+excerpt: 'Una reconstrucción teórica comunitaria de la arquitectura de Claude Mythos construida a partir de investigación pública. Un vistazo práctico a los transformers de profundidad recurrente, la inyección estable LTI y qué significa el compute en bucle para los LLM en producción.'
+lang: 'es'
+---
+
+![OpenMythos](/images/blog/open-mythos/hero.jpg)
+
+A pocas semanas del lanzamiento de Fable 5 / Mythos 5, la comunidad open-source hizo lo que siempre hace: intentar reconstruir la cosa desde primeros principios. El resultado es [OpenMythos](https://github.com/kyegomez/OpenMythos) — una **reconstrucción teórica** independiente y con licencia MIT de la sospechada arquitectura de Claude Mythos. Seamos claros desde el inicio: *no* está afiliada ni respaldada por Anthropic. Es una hipótesis en código, armada completamente a partir de literatura de investigación pública y el comportamiento observable del modelo.
+
+Esa advertencia importa. Como ingeniero, la diferencia entre "esto es lo que es Mythos" y "esto es un modelo autoconsistente que explica lo que Mythos *hace*" es todo el juego. OpenMythos es lo segundo — y es un trabajo fascinante de todos modos.
+
+## La Hipótesis Central: Transformers de Profundidad Recurrente
+
+La afirmación central detrás de OpenMythos es que Mythos es un **Transformer de Profundidad Recurrente (RDT)**, también llamado Looped Transformer. En vez de apilar cientos de capas únicas, tomás un subconjunto de capas y las ejecutás múltiples veces por forward pass. Mismos pesos. Más bucles. Razonamiento más profundo.
+
+*No* es chain-of-thought. No hay output de tokens intermedios. Todo el razonamiento ocurre **silenciosamente, dentro de un único forward pass**, en espacio latente continuo.
+
+La arquitectura divide las capas en tres bloques funcionales:
+
+```
+Input
+  ↓
+[Prelude P]         — capas transformer estándar, ejecutadas una vez
+  ↓
+[Recurrent Block R] — ejecutado en bucle T veces
+  ↑_______↓           (estado oculto h actualizado cada bucle con inyección de input e)
+  ↓
+[Coda C]            — capas transformer estándar, ejecutadas una vez
+  ↓
+Output
+```
+
+La regla de actualización en cada paso de bucle `t` es el corazón del diseño:
+
+```
+h_{t+1} = A·h_t + B·e + Transformer(h_t, e)
+```
+
+Donde `h_t` es el estado oculto tras el bucle `t`, `e` es el input codificado del Prelude **inyectado en cada bucle**, y `A`, `B` son parámetros de inyección aprendidos. Esa re-inyección constante de `e` es lo que frena el drift del modelo — mantiene la señal original del input viva a través de toda la profundidad de recurrencia.
+
+## Por Qué Esta Arquitectura Explica Mythos
+
+Esta es la parte que me pasó de escéptico a "bueno, al menos es plausible". OpenMythos vincula cuatro comportamientos observables de Mythos a mecanismos específicos:
+
+**1. Generalización sistemática.** Los transformers estándar luchan para combinar conocimiento en formas que nunca vieron en entrenamiento. Los transformers en bucle pasan este test vía un proceso de grokking en tres etapas — memorización, generalización dentro de distribución, y luego una transición de fase abrupta hacia generalización sistemática en composiciones novedosas. Eso mapea al salto cualitativo que Mythos muestra en preguntas genuinamente nuevas.
+
+**2. Extrapolación de profundidad.** Entrená con cadenas de razonamiento de 5 hops, evaluá con 10. El estándar falla; el bucle sale adelante corriendo más loops en inferencia. Más bucles en inferencia = cadenas de razonamiento más profundas = problemas más difíciles resueltos, sin reentrenar.
+
+**3. Pensamientos latentes como chain-of-thought implícito.** Cada iteración de bucle es funcionalmente equivalente a un paso de CoT, pero en espacio latente continuo en vez de espacio de tokens. Esto está formalmente probado (Saunshi et al., 2025). Lo clave: los pensamientos latentes continuos pueden codificar *múltiples próximos pasos alternativos simultáneamente* — más cerca de una búsqueda en anchura sobre el espacio de razonamiento que de un único camino comprometido.
+
+**4. Sin explosión de parámetros.** Un modelo en bucle con `k` capas ejecutado `L` veces se acerca a la calidad de un modelo no bucleado de `kL` capas, con solo `k` capas de parámetros. La huella de memoria no crece con la profundidad de razonamiento. El compute de inferencia escala con la cantidad de bucles, no con el tamaño del modelo.
+
+## El Problema de Estabilidad — y el Fix LTI
+
+Acá es donde mueren la mayoría de los proyectos de "buclemos las capas nomás". Entrenar modelos en bucle es notoriamente inestable. Dos modos de falla dominan: el estado oculto `h_t` crece sin cota a través de los bucles (explosión de residual), y el entrenamiento diverge por normas espectrales grandes en los parámetros de inyección (picos de loss).
+
+OpenMythos adopta el enfoque **Parcae** (Prairie et al., 2026), que reformula el bucle como un sistema dinámico Lineal Invariante en el Tiempo (LTI) discreto sobre el residual stream. Ignorando el término no lineal del Transformer, la recurrencia es:
+
+```
+h_{t+1} = A·h_t + B·e
+```
+
+La estabilidad está gobernada completamente por el **radio espectral** de `A`:
+
+- `ρ(A) < 1` → estable, convergente
+- `ρ(A) ≥ 1` → inestable, divergente
+
+El fix es restringir `A` *por construcción* para garantizar estabilidad: parametrizarlo como una matriz diagonal negativa continua, discretizar con esquemas ZOH/Euler (`A_discrete = exp(Δt · A_continuous)`), y exigir negatividad vía `A := Diag(-exp(log_A))`. El resultado es `ρ(A) < 1` sin importar el learning rate o el ruido del batch. La librería incluso expone una línea para verificarlo:
+
+```python
+A = model.recurrent.injection.get_A()
+rho = torch.linalg.eigvals(A).abs().max().item()
+print(f"Spectral radius ρ(A) = {rho:.4f} (must be < 1)")
+```
+
+Esta es la idea más importante del proyecto. Sin ella, la arquitectura en bucle es una curiosidad. Con ella, se vuelve entrenable a escala.
+
+## Mixture of Experts para la Anchura
+
+El bucle explica la *profundidad* de Mythos — composición iterativa sobre un único problema. No explica la *anchura* de manejar código, matemática, literatura, ciencia y derecho con los mismos pesos. OpenMythos sospecha que el FFN dentro del Recurrent Block es una **Mixture of Experts (MoE)** de grano fino: muchos expertos pequeños, un router top-m por token, más un puñado de **shared experts** siempre activos para absorber conocimiento común cross-dominio.
+
+La parte elegante: a medida que `h_t` evoluciona a través de los bucles, el router puede seleccionar subconjuntos distintos de expertos en cada profundidad, haciendo que cada bucle sea computacionalmente distinto a pesar de compartir pesos. Si la razón de activación ronda el 5%, Mythos podría tener cientos de miles de millones de parámetros totales mientras activa solo una fracción por token. El "recuento de parámetros" divulgado sería un número de almacenamiento, no de compute.
+
+## Leyes de Escalamiento — La Mitad de Parámetros por la Misma Calidad
+
+Parcae establece las primeras leyes de escalamiento predecibles para entrenamiento en bucle:
+
+- **Entrenamiento:** para un presupuesto de FLOPs fijo con parámetros fijos, aumentar la recurrencia media y reducir la cantidad de tokens da menor loss que bucles mínimos sobre más datos. Tanto la recurrencia óptima como los tokens óptimos siguen leyes de potencia con exponentes consistentes entre escalas.
+- **Inferencia:** más bucles en test-time mejora la calidad con una **caída exponencial predecible y saturante** — ganancias reales pero decrecientes, espejando el escalamiento de CoT en inferencia.
+
+El número titular: a 770M de parámetros, un modelo en bucle iguala la calidad downstream de un transformer de profundidad fija de 1.3B sobre los mismos datos. Aproximadamente **la mitad de parámetros por la misma calidad**. Aplicado a escala Mythos, una fracción grande de su capacidad aparente podría venir de la profundidad de bucle en vez del recuento crudo de parámetros.
+
+## Usándolo en la Práctica
+
+La instalación es un solo comando, y las variantes preconfiguradas van de 1B a 1T de parámetros:
+
+```bash
+pip install open-mythos
+```
+
+```python
+from open_mythos import mythos_7b, OpenMythos
+
+cfg = mythos_7b()
+model = OpenMythos(cfg)
+
+total = sum(p.numel() for p in model.parameters())
+print(f"Parameters: {total:,}")
+```
+
+| Variante | `dim` | Expertos | Bucles | Contexto | Output máx. |
+|----------|-------|----------|--------|----------|-------------|
+| `mythos_1b` | 2048 | 64 | 16 | 4k | 4k |
+| `mythos_10b` | 4096 | 128 | 24 | 8k | 4k |
+| `mythos_100b` | 8192 | 256 | 32 | 1M | 128k |
+| `mythos_1t` | 16384 | 512 | 64 | 1M | 128k |
+
+La atención es conmutable vía `cfg.attn_type`: `"gqa"` (Grouped Query Attention con Flash Attention 2 opcional) o `"mla"` (Multi-Latent Attention de DeepSeek-V2, que cachea un latente KV comprimido en vez de K/V completo). El script de entrenamiento apunta a 30B tokens sobre FineWeb-Edu con presupuestos ajustados por Chinchilla para la arquitectura en bucle, y soporta DDP vía `torchrun` out of the box.
+
+## Lo Que Marcaría Antes de Que Construyas Sobre Esto
+
+Unas advertencias honestas, porque el README hace mucho "es" cuando debería hacer "podría ser":
+
+- **Es una hipótesis, no un leak.** Nada de esto confirma lo que Anthropic realmente shippeó. "Mythos probablemente es un RDT" es una teoría fuerte y autoconsistente — no un hecho. Tratá a la arquitectura como una dirección de investigación convincente, no como una spec.
+- **Las referencias son frontera y varias son pre-prints.** Parcae, Hyperloop, LT2 y varios IDs de arxiv citados son bleeding-edge (o especulativos). Reproducí antes de confiar en los números de escalamiento en producción.
+- **La cantidad de bucles no es gratis.** Más bucles no siempre es mejor — pasada cierta profundidad, la recurrencia degrada las predicciones (el modo de falla de "overthinking"). Cualquier deploy real necesita un mecanismo de Adaptive Computation Time (ACT), que OpenMythos discute pero vos tenés que cablear.
+- **Memorización se intercambia contra razonamiento.** El bucle está estructuralmente sesgado hacia la composición sobre el recall literal. Si tu workload es recuperación factual, esta arquitectura puede perjudicar más que ayudar.
+
+## Lo Que Esto Significa
+
+Tres conclusiones para cualquiera que shippee features de LLM en producción:
+
+1. **El compute en inferencia se está volviendo un eje de diseño de primera clase.** El bucle te permite intercambiar parámetros por compute en runtime — más bucles para problemas más difíciles, menos para los fáciles. Es un modelo de costos fundamentalmente distinto al transformer de profundidad fija, y cambia cómo deberías pensar los presupuestos de latencia.
+
+2. **La frontera open-source ahora puede *teorizar* sobre los labs frontera.** Hace un año, la comunidad hacía ingeniería inversa de APIs. Ahora hace ingeniería inversa de *arquitecturas* a partir de evidencia conductual y matemática publicada. Es un cambio significativo en cómo itera el campo.
+
+3. **Las restricciones de estabilidad son el unlock, no el bucle en sí.** La idea del bucle es vieja (Universal Transformers, 2018). La contribución que la hace viable a escala es la restricción del radio espectral LTI. Cuando leas estos papers, prestá atención al análisis de sistemas dinámicos — ahí vive la ingeniería de verdad.
+
+OpenMythos merece tu tiempo incluso si nunca entrenás un modelo con él. Leelo como un tour guiado hacia dónde la comunidad de investigación cree que van los modelos frontera de razonamiento — y como un recordatorio de que las ideas más interesantes de este espacio se están trabajando cada vez más en público.
+
+---
+
+*Fuente: [OpenMythos — GitHub](https://github.com/kyegomez/OpenMythos). Ver también mi análisis anterior de [Claude Fable 5 y Mythos 5](/blog/claude-fable-mythos-es).*
