@@ -24,6 +24,7 @@
   --accent: #0ea5e9;
   --accent-foreground: #ffffff;
   --border: #e4e4e7;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -113,12 +114,32 @@ body {
   }
 }
 
-@keyframes badge-pop {
-  from {
+/* Wave motif reveals — content bobs up like surfacing from water */
+@keyframes wave-rise {
+  0% {
     opacity: 0;
-    transform: translateY(12px) scale(0.85);
+    transform: translateY(26px) scale(0.99);
   }
-  to {
+  60% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes wave-crest {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.92);
+  }
+  55% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.02);
+  }
+  100% {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
@@ -128,7 +149,7 @@ body {
   opacity: 0;
   animation-fill-mode: both;
   animation-duration: 600ms;
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-timing-function: var(--ease-out);
 }
 
 [data-animate].is-visible {
@@ -151,12 +172,21 @@ body {
   animation-name: slide-in-left;
 }
 
+[data-animate='wave-rise'] {
+  animation-duration: 700ms;
+}
+
+[data-animate='wave-rise'].is-visible {
+  animation-name: wave-rise;
+}
+
+/* Staggered children ripple in sequence, like a wave crossing the row */
 [data-stagger] > * {
   opacity: 0;
   animation-fill-mode: both;
-  animation-duration: 500ms;
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  animation-name: badge-pop;
+  animation-duration: 550ms;
+  animation-timing-function: var(--ease-out);
+  animation-name: wave-crest;
   animation-delay: calc(var(--stagger-i, 0) * 80ms);
 }
 
@@ -188,8 +218,8 @@ body {
 .avatar-image {
   position: relative;
   z-index: 1;
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+  transition: transform 0.35s var(--ease-out),
+    box-shadow 0.35s var(--ease-out),
     border-color 0.35s ease;
 }
 
@@ -203,8 +233,8 @@ body {
   display: inline-flex;
   opacity: 0;
   transform: scale(0);
-  transition: opacity 350ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 350ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 350ms var(--ease-out),
+    transform 350ms var(--ease-out);
   will-change: transform, opacity;
 }
 
@@ -216,12 +246,41 @@ body {
 .avatar-wrapper.is-in-nav {
   opacity: 0;
   transform: scale(0.6);
-  transition: opacity 350ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 350ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 350ms var(--ease-out),
+    transform 350ms var(--ease-out);
 }
 
 .animate-underline {
-  animation: underline-grow 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: underline-grow 600ms var(--ease-out) both;
+}
+
+/* Inside a scroll reveal, the underline waits for its parent to surface */
+[data-animate] .animate-underline {
+  width: 0;
+  animation: none;
+}
+
+[data-animate].is-visible .animate-underline {
+  animation: underline-grow 700ms var(--ease-out) 250ms both;
+}
+
+/* Ambient glow shared by every page, so wave-less pages keep the same mood */
+.ambient-glow {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      90rem 42rem at 85% -12%,
+      color-mix(in srgb, var(--accent) 10%, transparent),
+      transparent 65%
+    ),
+    radial-gradient(
+      70rem 36rem at 8% 4%,
+      color-mix(in srgb, var(--primary) 7%, transparent),
+      transparent 60%
+    );
 }
 
 /* Underwater text — when fluid wave background covers a section */
@@ -247,6 +306,11 @@ body {
   color: #164e63;
 }
 
+/* Text tint eases in as the water passes over, instead of flipping */
+main > section :is(h1, h2, h3, p, li, span) {
+  transition: color 600ms ease;
+}
+
 @media (prefers-reduced-motion: reduce) {
   [data-animate],
   [data-stagger] > *,
@@ -267,5 +331,8 @@ body {
   .nav-avatar.is-visible {
     opacity: 1 !important;
     transform: scale(1) !important;
+  }
+  .animate-underline {
+    width: 4rem !important;
   }
 }

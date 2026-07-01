@@ -1,16 +1,18 @@
 ---
-title: 'FrontierCode: El Primer Benchmark Que Mide Calidad de Código, No Solo Corrección'
+title: 'FrontierCode: El Benchmark Donde la Mejor IA de Código del Mundo Saca 13.4%'
 date: '2026-06-01'
 category: 'IA'
-excerpt: 'Cognition presenta FrontierCode, un benchmark construido por maintainers de open source que hace la pregunta real: ¿tu PR realmente se aprobaría? Incluso Claude Opus 4.8 obtiene solo 13.4% en Diamond.'
+excerpt: 'SWE-Bench pregunta si los tests pasan. FrontierCode — construido por los maintainers de Celery, Mattermost y 34 repos más — pregunta si tu PR realmente se aprobaría. El mejor modelo frontier apenas llega a 13.4%.'
 lang: 'es'
 ---
 
-Cognition, el equipo detrás de Devin, acaba de lanzar **FrontierCode** — y expone una verdad incómoda sobre los benchmarks de coding con IA.
+El mejor modelo de código del mundo acaba de sacar 13.4% en un benchmark de código. No porque haya olvidado programar — sino porque alguien por fin hizo la pregunta que importa: **¿un maintainer humano realmente aprobaría este PR?**
+
+Ese alguien es Cognition, el equipo detrás de Devin. Su nuevo benchmark, **FrontierCode**, expone una verdad incómoda sobre cómo medimos el código generado por IA.
 
 ## La Corrección Es el Mínimo
 
-Los benchmarks existentes como SWE-Bench miden *corrección funcional*: ¿el patch hace que los tests pasen? Pero conforme el código generado por IA se convierte en la vía principal hacia producción, la corrección sola ya no basta. La pregunta real es: **¿un maintainer realmente aprobaría este PR?**
+Los benchmarks existentes como SWE-Bench miden *corrección funcional*: ¿el patch hace que los tests pasen? Pero conforme el código generado por IA se convierte en la vía principal hacia producción, la corrección sola ya no basta. El código que se mergea tiene que superar un estándar mucho más alto.
 
 FrontierCode es el primer benchmark que mide la *mergeability* del código — una evaluación holística que incluye corrección conductual, seguridad contra regresiones, calidad de tests, disciplina de alcance, limpieza mecánica y adherencia a convenciones del codebase.
 

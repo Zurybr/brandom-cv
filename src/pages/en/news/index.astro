@@ -26,16 +26,20 @@ const posts = allPosts
 
 <Layout
   title="News — Brandom Ledesma"
-  description="Market analysis and tech industry news."
+  description="Signal over noise: the tech and market moves worth your attention, read by an engineer."
   lang={lang}
   hideWaves
 >
   <main class="mx-auto max-w-5xl px-4 py-16">
     <h1
-      class="mb-8 text-center text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
+      class="mb-3 text-center text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
     >
       News
     </h1>
+    <p class="mx-auto mb-12 max-w-2xl text-center text-lg text-muted-foreground">
+      Signal over noise: the tech and market moves worth your attention, read
+      by an engineer.
+    </p>
     <PostList posts={posts} lang={lang} section="news" />
   </main>
 </Layout>

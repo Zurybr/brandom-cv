@@ -28,7 +28,7 @@ const formattedDate = new Date(date).toLocaleDateString(locale, {
 const href = getLocalizedPath(`/${section}/${slug}`, lang)
 ---
 
-<a href={href} class="block">
+<a href={href} class="block h-full">
   <Card className="h-full transition-colors hover:border-primary">
     <div class="flex items-center gap-3 text-sm text-muted-foreground">
       <time datetime={date}>{formattedDate}</time>

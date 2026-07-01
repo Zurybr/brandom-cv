@@ -26,16 +26,20 @@ const posts = allPosts
 
 <Layout
   title="Noticias — Brandom Ledesma"
-  description="Análisis de mercado y noticias de la industria tecnológica."
+  description="Señal sobre ruido: los movimientos de tecnología y mercados que valen tu atención, leídos por un ingeniero."
   lang={lang}
   hideWaves
 >
   <main class="mx-auto max-w-5xl px-4 py-16">
     <h1
-      class="mb-8 text-center text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
+      class="mb-3 text-center text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
     >
       Noticias
     </h1>
+    <p class="mx-auto mb-12 max-w-2xl text-center text-lg text-muted-foreground">
+      Señal sobre ruido: los movimientos de tecnología y mercados que valen tu
+      atención, leídos por un ingeniero.
+    </p>
     <PostList posts={posts} lang={lang} section="news" />
   </main>
 </Layout>

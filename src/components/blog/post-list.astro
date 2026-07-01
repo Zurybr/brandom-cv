@@ -27,8 +27,10 @@ const t = useTranslations(lang)
     </p>
   ) : (
     <div class="grid gap-6 sm:grid-cols-2">
-      {posts.map((post) => (
-        <PostCard {...post} lang={lang} section={section} />
+      {posts.map((post, i) => (
+        <div class="h-full" data-animate="wave-rise" style={`animation-delay: ${i * 90}ms`}>
+          <PostCard {...post} lang={lang} section={section} />
+        </div>
       ))}
     </div>
   )

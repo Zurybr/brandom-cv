@@ -26,16 +26,20 @@ const posts = allPosts
 
 <Layout
   title="Blog — Brandom Ledesma"
-  description="Articles about development and technology."
+  description="Deep dives on AI, agents, and the craft of building software that survives production."
   lang={lang}
   hideWaves
 >
   <main class="mx-auto max-w-5xl px-4 py-16">
     <h1
-      class="mb-8 text-center text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
+      class="mb-3 text-center text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
     >
       Blog
     </h1>
+    <p class="mx-auto mb-12 max-w-2xl text-center text-lg text-muted-foreground">
+      Deep dives on AI, agents, and the craft of building software that
+      survives production.
+    </p>
     <PostList posts={posts} lang={lang} />
   </main>
 </Layout>

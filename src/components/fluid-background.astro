@@ -32,12 +32,64 @@
 
     uniform float uTime;
     uniform float uWaterLevel;
+    uniform float uAgitation;
     uniform vec2 uResolution;
 
-    // Wave function: returns wave surface Y in [0, 1] UV space
-    float wave(float x, float freq1, float amp1, float freq2, float amp2, float speed) {
-      return sin(x * freq1 + uTime * speed) * amp1
-           + sin(x * freq2 + uTime * speed * 0.7) * amp2;
+    float hash(vec2 p) {
+      return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+    }
+
+    float noise(vec2 p) {
+      vec2 i = floor(p);
+      vec2 f = fract(p);
+      vec2 u = f * f * (3.0 - 2.0 * f);
+      return mix(
+        mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x),
+        mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x),
+        u.y
+      );
+    }
+
+    // Traveling wave: three harmonics moving in opposing directions so the
+    // surface undulates organically instead of sliding as one rigid shape.
+    // Agitation (scroll velocity) makes the water choppier.
+    float wave(float x, float freq, float amp, float speed, float phase) {
+      float t = uTime * speed + phase;
+      float y = sin(x * freq + t) * 0.60
+              + sin(x * freq * 1.7 - t * 0.8 + 1.3) * 0.28
+              + sin(x * freq * 2.9 + t * 1.35 + 4.2) * 0.12;
+      return y * amp * (1.0 + uAgitation * 1.4);
+    }
+
+    // Straight-alpha "over" compositing (matches the renderer's normal blending)
+    vec4 over(vec4 base, vec4 top) {
+      float a = top.a + base.a * (1.0 - top.a);
+      if (a <= 0.0) return vec4(0.0);
+      vec3 rgb = (top.rgb * top.a + base.rgb * base.a * (1.0 - top.a)) / a;
+      return vec4(rgb, a);
+    }
+
+    // One water layer: depth-graded body, moving shimmer, and a foam crest
+    vec4 waterLayer(vec2 uv, float surfaceY, vec3 crest, vec3 deep, float alpha) {
+      float edge = 0.004;
+      float fill = smoothstep(surfaceY + edge, surfaceY - edge, uv.y);
+      if (fill <= 0.001) return vec4(0.0);
+
+      // Darker with depth below the surface
+      float depth = clamp((surfaceY - uv.y) * 2.2, 0.0, 1.0);
+      vec3 body = mix(crest, deep, depth * 0.85);
+
+      // Faint light streaks drifting through the upper water
+      float sparkle = noise(vec2(uv.x * 26.0, uv.y * 18.0 - uTime * 0.35));
+      body += crest * sparkle * 0.10 * (1.0 - depth);
+
+      // Foam: bright band hugging the crest, broken up by noise
+      float foamBand = exp(-abs(uv.y - surfaceY) * 140.0);
+      float foamNoise = 0.55 + 0.45 * noise(vec2(uv.x * 60.0 + uTime * 0.8, uTime * 0.4));
+      body = mix(body, vec3(0.88, 0.97, 0.99), foamBand * foamNoise * 0.9 * fill);
+
+      float a = alpha * fill * (0.75 + 0.25 * depth);
+      return vec4(body, a);
     }
 
     void main() {
@@ -46,32 +98,15 @@
       // Water level capped at 0.8 (80%) so water never covers the entire screen
       float waterY = uWaterLevel * 0.8;
 
-      // Soft edge width for smoothstep transitions
-      float edge = 0.02;
-
-      // 3 wave layers with different frequencies/amplitudes
-      float waveMargin = 0.06;
-
-      // Back layer — slowest, widest
-      float backWave = waterY + waveMargin * 2.0
-        + wave(uv.x, 6.0, 0.02, 3.0, 0.01, 0.8);
-      // Mid layer
-      float midWave = waterY + waveMargin
-        + wave(uv.x, 8.0, 0.015, 4.5, 0.008, 1.2);
-      // Front layer — fastest, most detail
-      float frontWave = waterY
-        + wave(uv.x, 10.0, 0.012, 6.0, 0.006, 1.8);
+      // Layer offsets (0.12 / 0.06) must stay in sync with the JS waterline math
+      float backY  = waterY + 0.12 + wave(uv.x, 5.0, 0.030, 0.55, 0.0);
+      float midY   = waterY + 0.06 + wave(uv.x, 7.0, 0.024, 0.90, 2.1);
+      float frontY = waterY        + wave(uv.x, 9.5, 0.020, 1.35, 4.6);
 
       vec4 color = vec4(0.0);
-
-      // Soft wave edges using smoothstep
-      float backAlpha = smoothstep(backWave + edge, backWave - edge, uv.y);
-      float midAlpha = smoothstep(midWave + edge, midWave - edge, uv.y);
-      float frontAlpha = smoothstep(frontWave + edge, frontWave - edge, uv.y);
-
-      color += vec4(0.031, 0.569, 0.698, 0.25) * backAlpha;   // #0891b2
-      color += vec4(0.024, 0.714, 0.831, 0.40) * midAlpha;     // #06b6d4
-      color += vec4(0.133, 0.827, 0.933, 0.55) * frontAlpha;   // #22d3ee
+      color = over(color, waterLayer(uv, backY,  vec3(0.031, 0.569, 0.698), vec3(0.024, 0.220, 0.302), 0.30)); // #0891b2
+      color = over(color, waterLayer(uv, midY,   vec3(0.024, 0.714, 0.831), vec3(0.031, 0.290, 0.388), 0.45)); // #06b6d4
+      color = over(color, waterLayer(uv, frontY, vec3(0.133, 0.827, 0.933), vec3(0.043, 0.365, 0.475), 0.60)); // #22d3ee
 
       gl_FragColor = color;
     }
@@ -84,6 +119,7 @@
     uniforms: {
       uTime: { value: 0.0 },
       uWaterLevel: { value: 0.0 },
+      uAgitation: { value: 0.0 },
       uResolution: {
         value: new THREE.Vector2(
           window.innerWidth * renderer.getPixelRatio(),
@@ -98,17 +134,34 @@
   const mesh = new THREE.Mesh(geometry, material);
   scene.add(mesh);
 
-  // Scroll → uWaterLevel + underwater text detection
-  const sections = document.querySelectorAll<HTMLElement>('main > section');
+  // Scroll physics: the water level follows scroll with inertia, and scroll
+  // velocity agitates the surface (choppier, faster waves) before it settles.
+  let targetLevel = 0;
+  let smoothLevel = 0;
+  let agitation = 0;
 
-  function updateWaterLevel() {
+  function readScroll() {
     const scrollMax = document.body.scrollHeight - window.innerHeight;
     const progress = scrollMax > 0 ? window.scrollY / scrollMax : 0;
-    material.uniforms.uWaterLevel.value = Math.max(0, Math.min(1, progress));
+    const next = Math.max(0, Math.min(1, progress));
+    agitation = Math.min(1, agitation + Math.abs(next - targetLevel) * 5.0);
+    targetLevel = next;
+  }
 
-    // Water line matching the visual wave peaks (base level + wave margin)
+  window.addEventListener('scroll', readScroll, { passive: true });
+  readScroll();
+  smoothLevel = targetLevel;
+  agitation = 0;
+
+  // Underwater text detection, driven by the smoothed level so the class
+  // flips exactly when the visible waves reach a section
+  const sections = document.querySelectorAll<HTMLElement>('main > section');
+  let appliedLevel = -1;
+
+  function applyUnderwater(level: number) {
+    // Water line matching the visual wave peaks (base level + back layer offset)
     const waveMarginPx = window.innerHeight * 0.12;
-    const waterLinePx = window.innerHeight * (1 - progress * 0.8) + waveMarginPx;
+    const waterLinePx = window.innerHeight * (1 - level * 0.8) + waveMarginPx;
 
     sections.forEach((section) => {
       const rect = section.getBoundingClientRect();
@@ -118,9 +171,6 @@
     });
   }
 
-  window.addEventListener('scroll', updateWaterLevel, { passive: true });
-  updateWaterLevel();
-
   // Reduced motion check
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let timeScale = prefersReducedMotion.matches ? 0 : 1;
@@ -128,7 +178,7 @@
     timeScale = e.matches ? 0 : 1;
   });
 
-  // Resize
+  // Resize — scrollMax changes with layout, so re-read the scroll target too
   const resizeObserver = new ResizeObserver(() => {
     const w = window.innerWidth;
     const h = window.innerHeight;
@@ -137,6 +187,8 @@
       w * renderer.getPixelRatio(),
       h * renderer.getPixelRatio()
     );
+    readScroll();
+    appliedLevel = -1;
   });
   resizeObserver.observe(document.body);
 
@@ -144,10 +196,25 @@
   let elapsedTime = 0;
   let lastTimestamp = 0;
   renderer.setAnimationLoop((timestamp: number) => {
-    const delta = lastTimestamp ? (timestamp - lastTimestamp) / 1000 : 0;
+    const delta = lastTimestamp ? Math.min((timestamp - lastTimestamp) / 1000, 0.1) : 0;
     lastTimestamp = timestamp;
-    elapsedTime += delta * timeScale;
+
+    // Frame-rate independent damping; reduced motion snaps instantly
+    const ease = timeScale === 0 ? 1 : 1 - Math.exp(-delta * 4.0);
+    smoothLevel += (targetLevel - smoothLevel) * ease;
+    agitation = timeScale === 0 ? 0 : agitation * Math.exp(-delta * 1.8);
+
+    // Agitation also speeds the waves up while the water is disturbed
+    elapsedTime += delta * timeScale * (1.0 + agitation * 0.9);
     material.uniforms.uTime.value = elapsedTime;
+    material.uniforms.uWaterLevel.value = smoothLevel;
+    material.uniforms.uAgitation.value = agitation;
+
+    if (Math.abs(smoothLevel - appliedLevel) > 0.0005) {
+      appliedLevel = smoothLevel;
+      applyUnderwater(smoothLevel);
+    }
+
     renderer.render(scene, camera);
   });
 </script>

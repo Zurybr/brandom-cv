@@ -1,16 +1,18 @@
 ---
-title: 'FrontierCode: The First Benchmark That Measures Code Quality, Not Just Correctness'
+title: "FrontierCode: The Benchmark Where the World's Best Coding AI Scores 13.4%"
 date: '2026-06-01'
 category: 'AI'
-excerpt: 'Cognition introduces FrontierCode, a benchmark built by open-source maintainers that asks the real question: would your PR actually get merged? Even Claude Opus 4.8 scores only 13.4% on Diamond.'
+excerpt: 'SWE-Bench asks whether the tests pass. FrontierCode — built by the maintainers of Celery, Mattermost, and 34 other repos — asks whether your PR would actually get merged. The best frontier model tops out at 13.4%.'
 lang: 'en'
 ---
 
-Cognition, the team behind Devin, just dropped **FrontierCode** — and it exposes a uncomfortable truth about AI coding benchmarks.
+The best coding model in the world just scored 13.4% on a coding benchmark. Not because it forgot how to program — because someone finally asked the question that matters: **would a human maintainer actually merge this PR?**
+
+That someone is Cognition, the team behind Devin. Their new benchmark, **FrontierCode**, exposes an uncomfortable truth about how we measure AI-generated code.
 
 ## Correctness Is Table Stakes
 
-Existing benchmarks like SWE-Bench measure *functional correctness*: does the patch make the tests green? But as AI-generated code becomes the default path to production, correctness alone is no longer enough. The real question is: **would a maintainer actually merge this PR?**
+Existing benchmarks like SWE-Bench measure *functional correctness*: does the patch make the tests green? But as AI-generated code becomes the default path to production, correctness alone is no longer enough. Merged code has to clear a much higher bar.
 
 FrontierCode is the first benchmark to measure code *mergeability* — a holistic assessment that includes behavioral correctness, regression safety, test quality, scope discipline, mechanical cleanliness, and adherence to codebase conventions.
 
