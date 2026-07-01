@@ -42,3 +42,11 @@ All values come from your [Supabase](https://supabase.com) project dashboard.
 | `npm run dev` | Start dev server at `localhost:4321` |
 | `npm run build` | Build for production |
 | `npm run preview` | Preview production build locally |
+
+## Deployment
+
+Pushing to `main` auto-deploys to GitHub Pages via `.github/workflows/deploy.yml`.
+
+- **Live site:** https://zurybr.github.io/brandom-cv/es/
+- **Build:** `npm run build` (Astro → `dist/`)
+- **Check deploy status:** `gh run list --branch main`
