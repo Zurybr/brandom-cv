@@ -13,7 +13,15 @@ export default defineConfig({
       prefixDefaultLocale: true,
     },
   },
-  integrations: [mdx(), sitemap()],
+  integrations: [
+    mdx(),
+    sitemap({
+      i18n: {
+        defaultLocale: 'en',
+        locales: { en: 'en-US', es: 'es-MX' },
+      },
+    }),
+  ],
   vite: {
     plugins: [tailwindcss()],
   },

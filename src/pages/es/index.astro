@@ -23,8 +23,10 @@ import type {
   Project,
   SocialLink,
 } from '@/types'
+import { localizeText } from '@/types'
 
 import type { Lang } from '@/i18n/ui'
+import { publicAsset } from '@/i18n/utils'
 
 const lang: Lang = 'es'
 
@@ -34,6 +36,20 @@ const education = educationData as Education[]
 const skills = skillsData as SkillGroup[]
 const projects = projectsData as Project[]
 const socialLinks = socialLinksData as SocialLink[]
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  jobTitle: localizeText(profile.title, lang),
+  description: localizeText(profile.summary, lang),
+  email: `mailto:${profile.email}`,
+  image: new URL(publicAsset(profile.avatar), Astro.site).href,
+  url: new URL(Astro.url.pathname, Astro.site).href,
+  sameAs: socialLinks
+    .filter((link) => link.url.startsWith('http'))
+    .map((link) => link.url),
+}
 ---
 
 <Layout
@@ -41,8 +57,9 @@ const socialLinks = socialLinksData as SocialLink[]
   description="Arquitecto de Software e Ingeniero en Nanotecnología enfocado en orquestación de AI, arquitecturas multi-agente y software de producción."
   ogType="website"
   lang={lang}
+  jsonLd={jsonLd}
 >
-  <main class="mx-auto max-w-5xl px-4">
+  <main id="main" class="mx-auto max-w-5xl px-4">
     <Hero profile={profile} lang={lang} />
     <About lang={lang} />
     <ExperienceSection experience={experience} lang={lang} />

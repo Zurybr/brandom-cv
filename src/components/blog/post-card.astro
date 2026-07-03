@@ -28,8 +28,10 @@ const formattedDate = new Date(date).toLocaleDateString(locale, {
 const href = getLocalizedPath(`/${section}/${slug}`, lang)
 ---
 
-<a href={href} class="block h-full">
-  <Card className="h-full transition-colors hover:border-primary">
+<a href={href} class="group block h-full">
+  <Card
+    className="h-full transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-lg"
+  >
     <div class="flex items-center gap-3 text-sm text-muted-foreground">
       <time datetime={date}>{formattedDate}</time>
       {category && <Badge text={category} />}
@@ -40,6 +42,12 @@ const href = getLocalizedPath(`/${section}/${slug}`, lang)
     <p class="mt-2 leading-relaxed text-muted-foreground">
       {excerpt}
     </p>
-    <p class="mt-3 text-sm text-primary">{readingTime}</p>
+    <div class="mt-3 flex items-center justify-between text-sm text-primary">
+      <span>{readingTime}</span>
+      <span
+        class="transition-transform duration-300 group-hover:translate-x-1"
+        aria-hidden="true">→</span
+      >
+    </div>
   </Card>
 </a>

@@ -4,6 +4,7 @@ import Layout from '@/layouts/Layout.astro'
 import { computeReadingTime } from '@/lib/utils'
 import BaseImg from '@/components/ui/base-img.astro'
 import type { Lang } from '@/i18n/ui'
+import { getLocalizedPath, useTranslations } from '@/i18n/utils'
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog')
@@ -25,6 +26,23 @@ const formattedDate = new Date(post.data.date).toLocaleDateString('es-MX', {
   month: 'long',
   day: 'numeric',
 })
+
+const t = useTranslations(lang)
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.excerpt,
+  datePublished: post.data.date.toISOString(),
+  inLanguage: lang,
+  author: {
+    '@type': 'Person',
+    name: 'Brandom Ledesma',
+    url: 'https://zurybr.github.io/brandom-cv/',
+  },
+  mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).href,
+}
 ---
 
 <Layout
@@ -33,9 +51,16 @@ const formattedDate = new Date(post.data.date).toLocaleDateString('es-MX', {
   ogType="article"
   ogPublishedTime={post.data.date.toISOString()}
   lang={lang}
-  hideWaves
+  jsonLd={jsonLd}
 >
-  <main class="mx-auto max-w-3xl px-4 py-16">
+  <main id="main" class="mx-auto max-w-3xl px-4 py-16">
+    <a
+      href={getLocalizedPath('/blog', lang)}
+      class="mb-8 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+    >
+      <span aria-hidden="true">←</span>
+      {t('back.blog')}
+    </a>
     <article>
       <header class="mb-8">
         <h1

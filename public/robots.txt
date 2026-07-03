@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://zurybr.github.io/sitemap-index.xml
+Sitemap: https://zurybr.github.io/brandom-cv/sitemap-index.xml

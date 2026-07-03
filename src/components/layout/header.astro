@@ -14,6 +14,14 @@ const navLinks = [
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '')
 const currentPath = Astro.url.pathname.replace(new RegExp(`^${basePath}`), '') || '/'
+
+// Exact match for home, prefix match for sections, so nested routes stay active
+function isActive(href: string): boolean {
+  const path = href.replace(new RegExp(`^${basePath}`), '')
+  const home = `/${lang}/`
+  if (path === home) return currentPath === home || currentPath === `/${lang}`
+  return currentPath.startsWith(path)
+}
 ---
 
 <header
@@ -44,11 +52,10 @@ const currentPath = Astro.url.pathname.replace(new RegExp(`^${basePath}`), '') |
         navLinks.map((link) => (
           <a
             href={link.href}
+            aria-current={isActive(link.href) ? 'page' : undefined}
             class:list={[
               'text-sm font-medium transition-colors hover:text-primary',
-              currentPath === link.href
-                ? 'text-primary'
-                : 'text-muted-foreground',
+              isActive(link.href) ? 'text-primary' : 'text-muted-foreground',
             ]}
           >
             {link.label}
@@ -92,11 +99,10 @@ const currentPath = Astro.url.pathname.replace(new RegExp(`^${basePath}`), '') |
       navLinks.map((link) => (
         <a
           href={link.href}
+          aria-current={isActive(link.href) ? 'page' : undefined}
           class:list={[
             'block px-4 py-3 text-sm font-medium transition-colors hover:text-primary',
-            currentPath === link.href
-              ? 'text-primary'
-              : 'text-muted-foreground',
+            isActive(link.href) ? 'text-primary' : 'text-muted-foreground',
           ]}
         >
           {link.label}

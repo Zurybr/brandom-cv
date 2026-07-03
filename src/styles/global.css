@@ -283,7 +283,8 @@ body {
     );
 }
 
-/* Underwater text — when fluid wave background covers a section */
+/* Underwater text — the fluid background toggles this per text block, so the
+   tint follows the visible waterline instead of flipping whole sections */
 .is-underwater {
   --foreground: #021a24;
   --muted-foreground: #0c3a4a;
@@ -294,21 +295,61 @@ body {
   --border: #0e7490;
 }
 
-.is-underwater h1,
-.is-underwater h2,
-.is-underwater h3 {
+.is-underwater:is(h1, h2, h3, h4),
+.is-underwater :is(h1, h2, h3, h4) {
   color: #021a24;
 }
 
-.is-underwater p,
-.is-underwater li,
-.is-underwater span {
+.is-underwater:is(p, li, span, time, blockquote),
+.is-underwater :is(p, li, span) {
   color: #164e63;
 }
 
-/* Text tint eases in as the water passes over, instead of flipping */
-main > section :is(h1, h2, h3, p, li, span) {
-  transition: color 600ms ease;
+/* Submerged text needs light ink in dark mode — the water reads darker there */
+@media (prefers-color-scheme: dark) {
+  .is-underwater {
+    --foreground: #d9f6ff;
+    --muted-foreground: #9adcf0;
+    --primary: #67e8f9;
+    --primary-foreground: #06323f;
+    --accent: #22d3ee;
+    --accent-foreground: #06323f;
+    --border: #155e75;
+  }
+
+  .is-underwater:is(h1, h2, h3, h4),
+  .is-underwater :is(h1, h2, h3, h4) {
+    color: #d9f6ff;
+  }
+
+  .is-underwater:is(p, li, span, time, blockquote),
+  .is-underwater :is(p, li, span) {
+    color: #9adcf0;
+  }
+}
+
+/* Fast tint so the color tracks the moving waterline closely */
+main :is(h1, h2, h3, h4, p, li, span, a, time, blockquote):not(pre *) {
+  transition: color 250ms ease;
+}
+
+/* Keyboard users get a visible jump-to-content control */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  transform: translateY(-200%);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
 }
 
 @media (prefers-reduced-motion: reduce) {

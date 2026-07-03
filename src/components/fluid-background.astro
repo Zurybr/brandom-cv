@@ -153,22 +153,28 @@
   smoothLevel = targetLevel;
   agitation = 0;
 
-  // Underwater text detection, driven by the smoothed level so the class
-  // flips exactly when the visible waves reach a section
-  const sections = document.querySelectorAll<HTMLElement>('main > section');
+  // Underwater text detection, per text block and driven by the same smoothed
+  // level as the shader, so the tint lands exactly when the visible water does
+  const underwaterTargets = Array.from(
+    document.querySelectorAll<HTMLElement>(
+      'main :is(h1, h2, h3, h4, p, li, blockquote, time, span, a):not(pre *)'
+    )
+  );
   let appliedLevel = -1;
 
   function applyUnderwater(level: number) {
-    // Water line matching the visual wave peaks (base level + back layer offset)
-    const waveMarginPx = window.innerHeight * 0.12;
-    const waterLinePx = window.innerHeight * (1 - level * 0.8) + waveMarginPx;
+    // Mid layer surface; the +0.06 offset must stay in sync with midY in the shader
+    const waterLinePx = window.innerHeight * (1 - (level * 0.8 + 0.06));
 
-    sections.forEach((section) => {
-      const rect = section.getBoundingClientRect();
-      // Use 15% from the top so the change triggers only when waves reach near the top
-      const sectionPoint = rect.top + rect.height * 0.15;
-      section.classList.toggle('is-underwater', sectionPoint > waterLinePx);
-    });
+    // Read every rect first, then write classes, so layout is computed once
+    const flips: Array<[HTMLElement, boolean]> = [];
+    for (const el of underwaterTargets) {
+      const rect = el.getBoundingClientRect();
+      if (rect.height === 0) continue;
+      const under = rect.top + rect.height * 0.5 > waterLinePx;
+      if (el.classList.contains('is-underwater') !== under) flips.push([el, under]);
+    }
+    for (const [el, under] of flips) el.classList.toggle('is-underwater', under);
   }
 
   // Reduced motion check
