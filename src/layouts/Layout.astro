@@ -121,13 +121,13 @@ const alternates = hasLocaleRoute
     </script>
     <script is:inline>
       ;(function () {
-        var heroWrapper = document.getElementById('hero-avatar-wrapper')
-        var navAvatar = document.getElementById('nav-avatar')
+        const heroWrapper = document.getElementById('hero-avatar-wrapper')
+        const navAvatar = document.getElementById('nav-avatar')
         if (!heroWrapper || !navAvatar) return
 
-        var scrollObserver = new IntersectionObserver(
+        const scrollObserver = new IntersectionObserver(
           function ([entry]) {
-            var inNav = !entry.isIntersecting
+            const inNav = !entry.isIntersecting
             navAvatar.classList.toggle('is-visible', inNav)
             heroWrapper.classList.toggle('is-in-nav', inNav)
           },
