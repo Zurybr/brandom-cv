@@ -137,15 +137,15 @@ body::before {
   min-height: 120px;
 }
 .brand-band-frame img { max-height: 96px; max-width: 320px; object-fit: contain; }
-.brand-band-frame .initials {
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 600;
-  font-size: clamp(44px, 6vw, 76px);
-  color: var(--ink);
-  letter-spacing: 0.02em;
+.brand-band-frame .brand-photo {
+  height: 96px;
+  width: 96px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  box-shadow: 0 0 0 6px rgba(9, 57, 80, 0.45);
+  filter: grayscale(15%) contrast(1.02);
 }
-.brand-band-frame .initials b { font-weight: 700; }
 .brand-band-note {
   display: flex;
   justify-content: space-between;
@@ -846,17 +846,11 @@ footer {
   padding-bottom: 44px;
 }
 .foot-brand .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-.foot-brand .mark {
+.foot-brand .foot-photo {
   width: 38px; height: 38px;
+  object-fit: cover;
+  border-radius: 50%;
   border: 1px solid var(--line);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 700;
-  font-size: 18px;
-  color: var(--ink);
 }
 .foot-brand .name { font-family: var(--sans); font-size: 15px; font-weight: 800; color: var(--ink); letter-spacing: 0.4px; }
 .foot-brand p { font-size: 13.5px; color: var(--ink-mute); max-width: 44ch; line-height: 1.7; }

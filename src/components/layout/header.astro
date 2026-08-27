@@ -1,7 +1,7 @@
 ---
 import LanguageSelector from '@/components/ui/language-selector.astro'
 import type { Lang } from '@/i18n/ui'
-import { getLangFromUrl, useTranslations } from '@/i18n/utils'
+import { getLangFromUrl, useTranslations, publicAsset } from '@/i18n/utils'
 
 const lang: Lang = getLangFromUrl(Astro.url)
 const t = useTranslations(lang)
@@ -15,7 +15,7 @@ const at = (hash: string) => (Astro.url.pathname.replace(new RegExp(`^${base}`),
     <div class="brand-band-frame">
       <span class="corner tl"></span>
       <span class="corner br"></span>
-      <span class="initials">B<b>&amp;</b>L</span>
+      <img src={publicAsset('/images/profile.png')} alt="Brandom Rafael Ledesma Muñoz" width="96" height="96" class="brand-photo" />
     </div>
     <div class="brand-band-note">
       <span>Inicio &nbsp;·&nbsp; Brandom Ledesma / 2026 / Vol. 01</span>

@@ -1,7 +1,7 @@
 ---
 import type { SocialLink } from '@/types'
 import type { Lang } from '@/i18n/ui'
-import { getLangFromUrl, useTranslations } from '@/i18n/utils'
+import { getLangFromUrl, useTranslations, publicAsset } from '@/i18n/utils'
 
 interface Props {
   socialLinks: SocialLink[]
@@ -22,7 +22,7 @@ const homeHash = (h: string) => `${base}/${lang}/${h}`
     <div class="foot-grid">
       <div class="foot-brand">
         <a href={homeHash('#top')} class="brand">
-          <span class="mark">B<i>&amp;</i>L</span>
+          <img src={publicAsset('/images/profile.png')} alt="" width="38" height="38" class="foot-photo" />
           <span class="name">Brandom Ledesma</span>
         </a>
         <p style="margin-top:18px;">
