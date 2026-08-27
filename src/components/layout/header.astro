@@ -1,149 +1,53 @@
 ---
 import LanguageSelector from '@/components/ui/language-selector.astro'
-import { getLangFromUrl, useTranslations, useTranslatedPath, publicAsset } from '@/i18n/utils'
+import type { Lang } from '@/i18n/ui'
+import { getLangFromUrl, useTranslations } from '@/i18n/utils'
 
-const lang = getLangFromUrl(Astro.url)
+const lang: Lang = getLangFromUrl(Astro.url)
 const t = useTranslations(lang)
-const translatePath = useTranslatedPath(lang)
-
-const navLinks = [
-  { href: translatePath('/'), label: t('nav.home') },
-  { href: translatePath('/blog'), label: t('nav.blog') },
-  { href: translatePath('/news'), label: t('nav.news') },
-]
-
-const basePath = import.meta.env.BASE_URL.replace(/\/$/, '')
-const currentPath = Astro.url.pathname.replace(new RegExp(`^${basePath}`), '') || '/'
-
-// Exact match for home, prefix match for sections, so nested routes stay active
-function isActive(href: string): boolean {
-  const path = href.replace(new RegExp(`^${basePath}`), '')
-  const home = `/${lang}/`
-  if (path === home) return currentPath === home || currentPath === `/${lang}`
-  return currentPath.startsWith(path)
-}
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
+const home = `${base}/${lang}/`
+// Section anchors live on the home page; from any subpage, link back to home + hash
+const at = (hash: string) => (Astro.url.pathname.replace(new RegExp(`^${base}`), '') === `/${lang}/` ? hash : home + hash)
 ---
-
-<header
-  class="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur"
->
-  <nav
-    class="mx-auto flex max-w-5xl items-center justify-between px-4 py-3"
-    aria-label={t('nav.main')}
-  >
-    <a
-      href={translatePath('/')}
-      class="flex items-center gap-2 text-lg font-bold text-foreground transition-colors hover:text-primary"
-    >
-      <span id="nav-avatar" class="nav-avatar">
-        <img
-          src={publicAsset('/images/profile.png')}
-          alt=""
-          width="36"
-          height="36"
-          class="h-9 w-9 rounded-full border-2 border-primary object-cover sm:h-9 sm:w-9"
-        />
-      </span>
-      BL
-    </a>
-
-    <div class="hidden items-center gap-4 sm:flex">
-      {
-        navLinks.map((link) => (
-          <a
-            href={link.href}
-            aria-current={isActive(link.href) ? 'page' : undefined}
-            class:list={[
-              'text-sm font-medium transition-colors hover:text-primary',
-              isActive(link.href) ? 'text-primary' : 'text-muted-foreground',
-            ]}
-          >
-            {link.label}
-          </a>
-        ))
-      }
-      <LanguageSelector />
+<div class="brand-band" id="top">
+  <div class="container">
+    <div class="brand-band-frame">
+      <span class="corner tl"></span>
+      <span class="corner br"></span>
+      <span class="initials">B<b>&amp;</b>L</span>
     </div>
-
-    <div class="flex items-center gap-2 sm:hidden">
-      <LanguageSelector />
-      <button
-        type="button"
-        id="menu-toggle"
-        aria-expanded="false"
-        aria-controls="mobile-menu"
-        aria-label={t('nav.menu.open')}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <line x1="4" x2="20" y1="12" y2="12"></line>
-          <line x1="4" x2="20" y1="6" y2="6"></line>
-          <line x1="4" x2="20" y1="18" y2="18"></line>
-        </svg>
-      </button>
+    <div class="brand-band-note">
+      <span>Inicio &nbsp;·&nbsp; Brandom Ledesma / 2026 / Vol. 01</span>
+      <span>001 / 007</span>
     </div>
-  </nav>
-
-  <div id="mobile-menu" class="border-t border-border sm:hidden hidden">
-    {
-      navLinks.map((link) => (
-        <a
-          href={link.href}
-          aria-current={isActive(link.href) ? 'page' : undefined}
-          class:list={[
-            'block px-4 py-3 text-sm font-medium transition-colors hover:text-primary',
-            isActive(link.href) ? 'text-primary' : 'text-muted-foreground',
-          ]}
-        >
-          {link.label}
-        </a>
-      ))
-    }
+  </div>
+</div>
+<div class="topbar">
+  <div class="container topbar-inner">
+    <span><b>BL / 2026</b> &nbsp;·&nbsp; <span set:html={t('ed.docMeta')} /></span>
+    <span class="mid">
+      <span set:html={t('ed.topbarSpecialty')} />
+      <span set:html={t('ed.topbarClaim')} />
+    </span>
+    <span class="right">
+      <a class="topbar-link" href={at('#contacto')}><span class="pulse"></span>{t('ed.topbarStatus')}</a>
+      <LanguageSelector />
+    </span>
+  </div>
+</div>
+<header class="nav">
+  <div class="container nav-inner">
+    <nav aria-label={t('nav.main')}>
+      <ul class="nav-links">
+        <li><a href={at('#top')}><span class="num">01</span>{t('nav.home')}</a></li>
+        <li><a href={at('#perfil')}><span class="num">02</span>{t('section.about')}</a></li>
+        <li><a href={at('#proyectos')}><span class="num">03</span>{t('section.projects')}</a></li>
+        <li><a href={at('#experiencia')}><span class="num">04</span>{t('section.experience')}</a></li>
+        <li><a href={at('#formacion')}><span class="num">05</span>{t('section.education')}</a></li>
+        <li><a href={at('#stack')}><span class="num">06</span>{t('section.skills')}</a></li>
+        <li><a href={at('#contacto')}><span class="num">07</span>{t('section.contact')}</a></li>
+      </ul>
+    </nav>
   </div>
 </header>
-
-<script is:inline>
-  const toggle = document.getElementById('menu-toggle')
-  const menu = document.getElementById('mobile-menu')
-
-  function setMenuOpen(open) {
-    if (!toggle || !menu) return
-    menu.classList.toggle('hidden', !open)
-    toggle.setAttribute('aria-expanded', String(open))
-    toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú')
-    toggle.querySelector('svg').innerHTML = open
-      ? '<path d="M18 6 6 18M6 6l12 12"></path>'
-      : '<line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line>'
-    if (open) {
-      const firstLink = menu.querySelector('a')
-      firstLink && firstLink.focus()
-    }
-  }
-
-  toggle &&
-    toggle.addEventListener('click', () => {
-      const isOpen = toggle.getAttribute('aria-expanded') === 'true'
-      setMenuOpen(!isOpen)
-    })
-
-  document.addEventListener('keydown', (e) => {
-    if (
-      e.key === 'Escape' &&
-      toggle &&
-      toggle.getAttribute('aria-expanded') === 'true'
-    ) {
-      setMenuOpen(false)
-      toggle.focus()
-    }
-  })
-</script>

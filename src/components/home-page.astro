@@ -1,0 +1,553 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import type { Lang } from '@/i18n/ui'
+import { useTranslations, publicAsset } from '@/i18n/utils'
+import { localizeText } from '@/types'
+
+import profileData from '@/content/profile.json'
+import experienceData from '@/content/experience.json'
+import educationData from '@/content/education.json'
+import skillsData from '@/content/skills.json'
+import projectsData from '@/content/projects.json'
+import socialLinksData from '@/content/social-links.json'
+
+import type {
+  Profile,
+  Experience,
+  Education,
+  SkillGroup,
+  Project,
+  SocialLink,
+} from '@/types'
+
+interface Props {
+  lang: Lang
+}
+
+const { lang } = Astro.props
+const t = useTranslations(lang)
+
+const profile = profileData as Profile
+const experience = experienceData as Experience[]
+const education = educationData as Education[]
+const skills = skillsData as SkillGroup[]
+const projects = projectsData as Project[]
+const socialLinks = socialLinksData as SocialLink[]
+
+const gh = socialLinks.find((l) => l.icon === 'github')?.url || '#'
+const li = socialLinks.find((l) => l.icon === 'linkedin')?.url || '#'
+const mail = socialLinks.find((l) => l.icon === 'mail')?.url || '#'
+
+const mailSubject = lang === 'es' ? 'Contacto desde tu CV' : 'Contact from your CV'
+const mailtoHire = `mailto:${profile.email}?subject=${encodeURIComponent(mailSubject)}`
+const chipHire = lang === 'es' ? 'Quiero contratarte' : 'I want to hire you'
+const chipCollab = lang === 'es' ? 'Colaboración en un proyecto' : 'Project collaboration'
+const chipOther = lang === 'es' ? 'Otro motivo' : 'Something else'
+
+// flatten skills for the marquee (duplicated for the seamless loop)
+const flatSkills: string[] = skills.flatMap((g) => g.items)
+const marqueeSkills = [...flatSkills, ...flatSkills]
+const wireHandles = [
+  { h: 'AI Systems', r: lang === 'es' ? 'especialidad' : 'specialty' },
+  { h: 'Software Architecture', r: lang === 'es' ? 'especialidad' : 'specialty' },
+  { h: 'Full-Stack', r: lang === 'es' ? 'categoría' : 'category' },
+  { h: 'Open Source', r: lang === 'es' ? 'categoría' : 'category' },
+  { h: 'Datos', r: lang === 'es' ? 'orientan' : 'orient' },
+  { h: 'Sistemas', r: lang === 'es' ? 'producción' : 'ship' },
+  { h: 'Agentes', r: lang === 'es' ? 'orquestan' : 'orchestrate' },
+  { h: 'KPIs', r: lang === 'es' ? 'midem' : 'measure' },
+]
+const wireHandlesLoop = [...wireHandles, ...wireHandles]
+
+const romanSteps = lang === 'es'
+  ? ['DIAGNÓSTICO', 'ARQUITECTURA', 'CONSTRUCCIÓN', 'MEDICIÓN']
+  : ['DIAGNOSIS', 'ARCHITECTURE', 'BUILD', 'MEASUREMENT']
+const vizNoLabel = lang === 'es' ? 'SIN SISTEMA' : 'NO SYSTEM'
+const vizTop = lang === 'es' ? 'IDEA → DISEÑO → PRODUCCIÓN → VALOR' : 'IDEA → DESIGN → PRODUCTION → VALUE'
+const vizRight = lang === 'es' ? '+ VALOR' : '+ VALUE'
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  jobTitle: localizeText(profile.title, lang),
+  description: localizeText(profile.summary, lang),
+  email: `mailto:${profile.email}`,
+  image: new URL(publicAsset(profile.avatar), Astro.site).href,
+  url: new URL(Astro.url.pathname, Astro.site).href,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Mexico City',
+    addressCountry: 'MX',
+  },
+  sameAs: socialLinks.filter((l) => l.url.startsWith('http')).map((l) => l.url),
+}
+---
+
+<Layout
+  title={lang === 'es'
+    ? 'Brandom Ledesma — Ingeniero de Software & Sistemas de IA | CV'
+    : 'Brandom Ledesma — Software & AI Systems Engineer | CV'}
+  description={localizeText(profile.summary, lang)}
+  ogType="website"
+  lang={lang}
+  jsonLd={jsonLd}
+>
+  <main id="main">
+    <!-- ============ I. HERO ============ -->
+    <section class="hero" id="inicio">
+      <div class="container">
+        <div class="sec-rule">
+          <span class="roman">I.</span>
+          <span class="meta-grp stack">
+            <span>{t('nav.home')}</span>
+            <span class="rule-sub">BL / 2026 &nbsp;·&nbsp; <span set:html={t('ed.docMeta')} /></span>
+            <span class="rule-kick" set:html={t('ed.heroKick')} />
+          </span>
+          <span>001 / 007</span>
+        </div>
+      </div>
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <span class="label" data-reveal set:html={t('ed.available')} />
+          <h1 class="display" data-reveal>
+            {profile.name.split(' ').slice(0, 1).join(' ')}
+            <em>{profile.name.split(' ').slice(1).join(' ')}</em><span class="dot">.</span>
+          </h1>
+          <p class="lead" data-reveal>{localizeText(profile.summary, lang)}</p>
+          <p class="hero-note" data-reveal><span class="warn">↳</span>{t('ed.heroNote')}</p>
+          <div class="hero-actions" data-reveal>
+            <a class="btn btn-primary" href="#contacto">
+              {t('ed.cta')}
+              <span class="arrow"><svg viewBox="0 0 24 24"><path d="M5 19L19 5M19 5H8M19 5v11"/></svg></span>
+            </a>
+            <a class="btn btn-ghost" href={gh} target="_blank" rel="noreferrer noopener">
+              GitHub
+              <span class="arrow"><svg viewBox="0 0 24 24"><path d="M7 5C4 6 3 8 3 11v8h5v-3h8v3h5v-8c0-3-1-5-4-6l-1 2h-8z"/></svg></span>
+            </a>
+            <a class="btn btn-ghost" href={li} target="_blank" rel="noreferrer noopener">
+              LinkedIn
+              <span class="arrow"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 12h6M12 9v6"/></svg></span>
+            </a>
+          </div>
+          <ul class="hero-proof" data-reveal>
+            <li>{t('ed.proof1')}</li>
+            <li>{t('ed.proof2')}</li>
+            <li>{t('ed.proof3')}</li>
+          </ul>
+          <div class="hero-stats" data-reveal>
+            <div class="stat">
+              <span class="ring solid">01</span>
+              <span class="stat-label"><b>{t('ed.stat1a')}</b>{t('ed.stat1b')}</span>
+            </div>
+            <div class="stat">
+              <span class="ring">02</span>
+              <span class="stat-label"><b>{t('ed.stat2a')}</b>{t('ed.stat2b')}</span>
+            </div>
+            <div class="stat">
+              <span class="ring coral">03</span>
+              <span class="stat-label"><b>{t('ed.stat3a')}</b>{t('ed.stat3b')}</span>
+            </div>
+          </div>
+          <div class="hero-foot" data-reveal>
+            <span class="meta" set:html={t('ed.heroFoot')} />
+            <span class="coord">{t('ed.coords')}</span>
+          </div>
+        </div>
+        <div class="hero-art" data-reveal="scale">
+          <span class="corner tl"></span>
+          <span class="corner tr"></span>
+          <span class="corner bl"></span>
+          <span class="corner br"></span>
+          <span class="annot annot-tl coord">{t('ed.fig')}</span>
+          <span class="annot annot-tr">{t('ed.plate')}</span>
+          <span class="annot annot-bl coord">CDMX · MX</span>
+          <span class="annot annot-br" set:html={t('ed.doc')} />
+          <svg class="hero-viz" viewBox="0 0 640 720" preserveAspectRatio="xMaxYMid meet" role="img"
+            aria-label={lang === 'es' ? 'Gráfica: cada iteración de un sistema bien construido aumenta su valor en producción' : 'Chart: each iteration of a well-built system increases its value in production'}>
+            <g stroke="var(--line-faint)" stroke-width="1">
+              <line x1="70" y1="140" x2="600" y2="140"/>
+              <line x1="70" y1="252" x2="600" y2="252"/>
+              <line x1="70" y1="364" x2="600" y2="364"/>
+              <line x1="70" y1="476" x2="600" y2="476"/>
+            </g>
+            <line x1="70" y1="96" x2="70" y2="588" stroke="var(--ink-faint)" stroke-width="1"/>
+            <line x1="70" y1="588" x2="600" y2="588" stroke="var(--ink-faint)" stroke-width="1"/>
+            <path d="M70,548 C220,540 420,554 600,544" fill="none" stroke="var(--ink-faint)" stroke-width="1.5" stroke-dasharray="5 6"/>
+            <text x="600" y="530" text-anchor="end" font-size="10" letter-spacing="2" fill="var(--ink-faint)">{vizNoLabel}</text>
+            <path class="viz-area" d="M70,572 C210,562 320,492 400,396 C480,300 540,196 600,150 L600,588 L70,588 Z" fill="rgba(9,57,80,0.55)"/>
+            <path class="viz-line" d="M70,572 C210,562 320,492 400,396 C480,300 540,196 600,150" fill="none" stroke="#FFFFFF" stroke-width="3"/>
+            <g class="viz-travel">
+              <circle class="viz-dot-head" r="5" fill="#FFFFFF"/>
+              <animateMotion dur="2.6s" begin="0.2s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.25 1 0.5 1" path="M70,572 C210,562 320,492 400,396 C480,300 540,196 600,150"/>
+            </g>
+            <circle class="viz-dot viz-dot-start" cx="70" cy="572" r="3" fill="#FFFFFF"/>
+            <text x="96" y="118" font-size="10" letter-spacing="2" fill="var(--ink-mute)">{romanSteps.join(' · ')}</text>
+            <text x="600" y="126" text-anchor="end" font-size="11" font-weight="700" letter-spacing="2" fill="#FFFFFF">{vizRight}</text>
+            <g font-size="9.5" letter-spacing="1.5" fill="var(--ink-mute)">
+              <text x="70" y="616">I1</text><text x="176" y="616">I2</text><text x="282" y="616">I3</text><text x="388" y="616">I4</text><text x="494" y="616">I5</text><text x="600" y="616" text-anchor="end">I6</text>
+            </g>
+            <text x="70" y="652" font-size="10" letter-spacing="2" fill="var(--ink-faint)">{vizTop}</text>
+          </svg>
+          <div class="index">
+            <span class="on"><span class="n">01</span>{t('ed.heroIndex1')}</span>
+            <span><span class="n">02</span>{t('ed.heroIndex2')}</span>
+            <span><span class="n">03</span>{t('ed.heroIndex3')}</span>
+            <span><span class="n">04</span>{t('ed.heroIndex4')}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ wire marquee ============ -->
+    <section class="wire" aria-label={t('ed.wireLeft')}>
+      <div class="container wire-inner">
+        <div class="wire-left">
+          <span class="wire-mark" aria-hidden="true"><span class="wire-pulse"></span></span>
+          <span class="wire-title">
+            <b>{t('ed.wireLeft')}</b>
+            <span>{t('ed.wireSub')}</span>
+          </span>
+        </div>
+        <div class="wire-rows">
+          <div class="wire-row">
+            <div class="marquee-track" aria-hidden="true">
+              {marqueeSkills.map((s) => (
+                <span class="wire-item"><span class="wire-dot">·</span><span class="wire-name">{s}</span></span>
+              ))}
+            </div>
+          </div>
+          <div class="wire-row reverse">
+            <div class="marquee-track">
+              {wireHandlesLoop.map((w) => (
+                <span class="wire-item"><span class="wire-dot">·</span><span class="wire-handle">{w.h}</span><span class="wire-role">{w.r}</span></span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ II. ABOUT ============ -->
+    <section class="about sec" id="perfil">
+      <div class="container">
+        <div class="sec-rule">
+          <span class="roman">II.</span>
+          <span class="meta-grp">
+            <span>{t('ed.aboutSection')}</span>
+            <span class="dot-mark">•</span>
+            <span>BL / <span set:html={t('ed.docMeta')} /></span>
+          </span>
+          <span>002 / 007</span>
+        </div>
+        <div class="about-grid">
+          <div class="about-copy" data-reveal>
+            <span class="label" set:html={t('ed.aboutLabel')} />
+            <h2 class="display" set:html={t('ed.aboutHead')} />
+            <p class="lead" style="margin-top:26px;">{localizeText(profile.summary, lang)}</p>
+            <p>{t('section.about.text')}</p>
+            <div class="footer-row">
+              <span class="mark">BL</span>
+              <span>AI · Architecture · Full-Stack · Data</span>
+              <span class="stamp">
+                <span>{t('ed.aboutStampA')}</span>
+                <span style="color: var(--ink);">{t('ed.aboutStampB')}</span>
+              </span>
+            </div>
+          </div>
+          <div class="about-art" data-reveal="right">
+            <svg class="about-viz" viewBox="0 0 620 560" preserveAspectRatio="xMidYMid meet" role="img"
+              aria-label={lang === 'es' ? 'Esquema: investigación e ingeniería convergen en sistemas en producción' : 'Diagram: research and engineering converge into production systems'}>
+              <text x="30" y="46" fill="#F8FAFC" font-family="Inter Tight, sans-serif" font-size="14" font-weight="800" letter-spacing="3">{lang === 'es' ? 'DOS RAÍCES' : 'TWO ROOTS'}</text>
+              <line x1="30" y1="58" x2="66" y2="58" stroke="rgba(248, 250, 252, 0.85)" stroke-width="2"/>
+              <text x="30" y="80" fill="rgba(248, 250, 252, 0.55)" font-family="Inter, sans-serif" font-size="10">{lang === 'es' ? 'Un mismo propósito:' : 'One purpose:'}</text>
+              <text x="30" y="94" fill="rgba(248, 250, 252, 0.55)" font-family="Inter, sans-serif" font-size="10">{lang === 'es' ? 'sistemas que funcionan.' : 'systems that work.'}</text>
+              <path d="M180 118 Q262 78 342 118" fill="none" stroke="rgba(248, 250, 252, 0.4)" stroke-dasharray="4 6"/>
+              <text x="261" y="70" text-anchor="middle" fill="rgba(248, 250, 252, 0.55)" font-family="Inter Tight, sans-serif" font-size="9" letter-spacing="2">{lang === 'es' ? 'CIENCIA + INGENIERÍA' : 'SCIENCE + ENGINEERING'}</text>
+              <circle cx="150" cy="210" r="76" fill="rgba(9, 57, 80, 0.55)" stroke="rgba(248, 250, 252, 0.35)"/>
+              <g stroke="rgba(248, 250, 252, 0.85)" stroke-width="3">
+                <line x1="122" y1="234" x2="122" y2="206"/>
+                <line x1="140" y1="234" x2="140" y2="186"/>
+                <line x1="158" y1="234" x2="158" y2="214"/>
+                <line x1="176" y1="234" x2="176" y2="196"/>
+                <line x1="112" y1="234" x2="186" y2="234"/>
+              </g>
+              <text x="150" y="316" text-anchor="middle" fill="rgba(248, 250, 252, 0.9)" font-family="Inter Tight, sans-serif" font-size="12" font-weight="700" letter-spacing="2">{lang === 'es' ? 'INVESTIGACIÓN' : 'RESEARCH'}</text>
+              <text x="150" y="333" text-anchor="middle" fill="rgba(248, 250, 252, 0.5)" font-family="Inter Tight, sans-serif" font-size="9" letter-spacing="1.5">IPN · NANOTECH</text>
+              <circle cx="372" cy="210" r="76" fill="rgba(9, 57, 80, 0.55)" stroke="rgba(248, 250, 252, 0.35)"/>
+              <g stroke="rgba(248, 250, 252, 0.85)" stroke-width="3" fill="none">
+                <rect x="340" y="180" width="64" height="46" rx="5"/>
+                <line x1="340" y1="192" x2="404" y2="192"/>
+                <path d="M356 202 l-8 8 l8 8"/>
+                <path d="M388 202 l8 8 l-8 8"/>
+              </g>
+              <text x="372" y="316" text-anchor="middle" fill="rgba(248, 250, 250, 0.9)" font-family="Inter Tight, sans-serif" font-size="12" font-weight="700" letter-spacing="2">{lang === 'es' ? 'INGENIERÍA' : 'ENGINEERING'}</text>
+              <text x="372" y="333" text-anchor="middle" fill="rgba(248, 250, 252, 0.5)" font-family="Inter Tight, sans-serif" font-size="9" letter-spacing="1.5">AI · FULL-STACK</text>
+              <path d="M150 288 Q180 350 235 378" fill="none" stroke="rgba(248, 250, 252, 0.7)" stroke-width="2"/>
+              <path d="M372 288 Q342 350 287 378" fill="none" stroke="rgba(248, 250, 252, 0.7)" stroke-width="2"/>
+              <text x="105" y="345" fill="rgba(248, 250, 252, 0.45)" font-family="Inter Tight, sans-serif" font-size="8.5" letter-spacing="1.5" transform="rotate(55 105 345)">{lang === 'es' ? 'OBSERVO' : 'OBSERVE'}</text>
+              <text x="418" y="345" fill="rgba(248, 250, 252, 0.45)" font-family="Inter Tight, sans-serif" font-size="8.5" letter-spacing="1.5" transform="rotate(-55 418 345)">{lang === 'es' ? 'CONSTRUYO' : 'BUILD'}</text>
+              <circle cx="261" cy="420" r="52" fill="rgba(9, 57, 80, 0.75)" stroke="rgba(248, 250, 252, 0.85)" stroke-width="2"/>
+              <circle cx="261" cy="420" r="43" fill="none" stroke="rgba(248, 250, 252, 0.3)"/>
+              <text x="261" y="427" text-anchor="middle" fill="#F8FAFC" font-family="Inter Tight, sans-serif" font-size="17" font-weight="800" letter-spacing="1">BL</text>
+              <text x="261" y="489" text-anchor="middle" fill="rgba(248, 250, 252, 0.5)" font-family="Inter Tight, sans-serif" font-size="9" letter-spacing="2">{lang === 'es' ? 'SISTEMAS REALES' : 'REAL SYSTEMS'}</text>
+              <line x1="261" y1="498" x2="261" y2="516" stroke="rgba(248, 250, 252, 0.7)" stroke-width="2"/>
+              <path d="M255 510 l6 9 l6 -9" fill="none" stroke="rgba(248, 250, 252, 0.7)" stroke-width="2"/>
+              <rect x="166" y="524" width="190" height="36" rx="18" fill="#F8FAFC"/>
+              <text x="261" y="547" text-anchor="middle" fill="#093950" font-family="Inter Tight, sans-serif" font-size="12" font-weight="800" letter-spacing="1.5">{lang === 'es' ? 'EN PRODUCCIÓN ✓' : 'IN PRODUCTION ✓'}</text>
+            </svg>
+            <div class="about-caption">
+              <b>{lang === 'es' ? 'Nanotecnología + ingeniería de software.' : 'Nanotechnology + software engineering.'}</b>
+              (Brandom Ledesma, MMXXVI)
+            </div>
+          </div>
+        </div>
+
+        <div id="principios" style="margin-top:100px;">
+          <div class="pillar-rule">
+            <span class="roman">II.a</span>
+            <span>{t('ed.foundRule')}</span>
+            <span>02.a</span>
+          </div>
+          <div class="founders-grid">
+            <div class="founder" data-reveal>
+              <div class="num" style="font-family:var(--serif);font-style:italic;font-size:28px;margin-bottom:12px;">01</div>
+              <h3>{t('ed.prin1t')}</h3>
+              <p class="role" style="margin-bottom:10px;">{t('ed.aboutStampA')}</p>
+              <p>{t('ed.prin1d')}</p>
+            </div>
+            <div class="founder" data-reveal>
+              <div class="num" style="font-family:var(--serif);font-style:italic;font-size:28px;margin-bottom:12px;">02</div>
+              <h3>{t('ed.prin2t')}</h3>
+              <p class="role" style="margin-bottom:10px;">{t('ed.aboutStampA')}</p>
+              <p>{t('ed.prin2d')}</p>
+            </div>
+            <div class="founder" data-reveal>
+              <div class="num" style="font-family:var(--serif);font-style:italic;font-size:28px;margin-bottom:12px;">03</div>
+              <h3>{t('ed.prin3t')}</h3>
+              <p class="role" style="margin-bottom:10px;">{t('ed.aboutStampA')}</p>
+              <p>{t('ed.prin3d')}</p>
+            </div>
+            <div class="founder" data-reveal>
+              <div class="num" style="font-family:var(--serif);font-style:italic;font-size:28px;margin-bottom:12px;">04</div>
+              <h3>{t('ed.prin4t')}</h3>
+              <p class="role" style="margin-bottom:10px;">{t('ed.aboutStampA')}</p>
+              <p>{t('ed.prin4d')}</p>
+            </div>
+          </div>
+          <div class="tmux-status" style="margin-top:16px;">
+            <span set:html={t('ed.tmuxStatus')} />
+            <span>2026 · CDMX</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ III. PROJECTS ============ -->
+    <section class="sec" id="proyectos">
+      <div class="container">
+        <div class="sec-rule">
+          <span class="roman">III.</span>
+          <span class="meta-grp">
+            <span>{t('ed.projectsSection')}</span>
+            <span class="dot-mark">•</span>
+            <span>{lang === 'es' ? 'Del repo al usuario' : 'From repo to user'}</span>
+          </span>
+          <span>003 / 007</span>
+        </div>
+        <div data-reveal style="margin-bottom:44px;">
+          <span class="label" set:html={t('ed.projectsLabel')} />
+          <h2 class="display" set:html={t('ed.projectsHead')} />
+          <p class="lead" style="margin-top:24px;">{t('ed.projectsLead')}</p>
+        </div>
+        <div class="projects-grid">
+          {projects.map((p) => (
+            <article class="work-card" data-reveal>
+              <div class="img">
+                <span class="corner tl"></span>
+                <span class="corner br"></span>
+                <img src={publicAsset(p.image)} alt={localizeText(p.title, lang)} loading="lazy" width="800" height="450" />
+              </div>
+              <div class="body">
+                <h3>{localizeText(p.title, lang)}</h3>
+                <p>{localizeText(p.description, lang)}</p>
+                <div class="tags">
+                  {p.technologies.map((tech) => <span>{tech}</span>)}
+                </div>
+                <div class="work-links">
+                  <a class="inline-link" href={p.repoUrl} target="_blank" rel="noreferrer noopener">
+                    {t('section.projects.code')}
+                    <svg viewBox="0 0 24 24"><path d="M5 19L19 5M19 5H8M19 5v11"/></svg>
+                  </a>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ IV. EXPERIENCE ============ -->
+    <section class="sec" id="experiencia">
+      <div class="container">
+        <div class="sec-rule">
+          <span class="roman">IV.</span>
+          <span class="meta-grp">
+            <span>{t('ed.expSection')}</span>
+            <span class="dot-mark">•</span>
+            <span>2020 — {lang === 'es' ? 'presente' : 'present'}</span>
+          </span>
+          <span>004 / 007</span>
+        </div>
+        <div data-reveal style="margin-bottom:30px;">
+          <span class="label" set:html={t('ed.expLabel')} />
+          <h2 class="display" set:html={t('ed.expHead')} />
+        </div>
+        <div>
+          {experience.map((job) => (
+            <div class="xp-row" data-reveal>
+              <div class="xp-when">
+                <b>{localizeText(job.company, lang)}</b>
+                {localizeText(job.period, lang)}
+              </div>
+              <div class="xp-main">
+                <h3>{localizeText(job.role, lang)}</h3>
+                <p>{localizeText(job.description, lang)}</p>
+                <div class="xp-tags">
+                  {job.technologies.map((tech) => <span>{tech}</span>)}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ V. EDUCATION ============ -->
+    <section class="sec" id="formacion">
+      <div class="container">
+        <div class="sec-rule">
+          <span class="roman">V.</span>
+          <span class="meta-grp">
+            <span>{t('ed.eduSection')}</span>
+            <span class="dot-mark">•</span>
+            <span>IPN · UPVM</span>
+          </span>
+          <span>005 / 007</span>
+        </div>
+        <div data-reveal style="margin-bottom:44px;">
+          <span class="label" set:html={t('ed.eduLabel')} />
+          <h2 class="display" set:html={t('ed.eduHead')} />
+        </div>
+        <div class="edu-grid">
+          {education.map((ed) => (
+            <div class="edu-card" data-reveal>
+              <span class="corner tl"></span>
+              <span class="corner br"></span>
+              <h3>{ed.institution}</h3>
+              <p class="degree">{localizeText(ed.degree, lang)}</p>
+              <p>{localizeText(ed.description, lang)}</p>
+              <span class="xp-when">{localizeText(ed.period, lang)}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ VI. SKILLS ============ -->
+    <section class="sec" id="stack">
+      <div class="container">
+        <div class="sec-rule">
+          <span class="roman">VI.</span>
+          <span class="meta-grp">
+            <span>{t('ed.skillsSection')}</span>
+            <span class="dot-mark">•</span>
+            <span>{flatSkills.length}+ {lang === 'es' ? 'herramientas' : 'tools'}</span>
+          </span>
+          <span>006 / 007</span>
+        </div>
+        <div data-reveal style="margin-bottom:44px;">
+          <span class="label" set:html={t('ed.skillsLabel')} />
+          <h2 class="display" set:html={t('ed.skillsHead')} />
+        </div>
+        <div>
+          {skills.map((group, i) => (
+            <div class="skill-group" data-reveal>
+              <div class="pillar-rule">
+                <span class="roman">VI.{String.fromCharCode(97 + i)}</span>
+                <span>{localizeText(group.category, lang)}</span>
+                <span>{group.items.length}</span>
+              </div>
+              <div class="skill-chips">
+                {group.items.map((item) => <span>{item}</span>)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ VII. CONTACT ============ -->
+    <section class="sec" id="contacto">
+      <div class="container">
+        <div class="sec-rule">
+          <span class="roman">VII.</span>
+          <span class="meta-grp">
+            <span>{t('ed.contactSection')}</span>
+            <span class="dot-mark">•</span>
+            <span>BL / 2026</span>
+          </span>
+          <span>007 / 007</span>
+        </div>
+        <div class="work-grid contact">
+          <div class="work-copy" data-reveal>
+            <span class="label" set:html={t('ed.contactLabel')} />
+            <h2 class="display" style="font-size:clamp(32px,3.2vw,52px);" set:html={t('ed.contactHead')} />
+            <p class="lead" style="margin-top:24px; font-size:16px;">{t('ed.contactLead')}</p>
+            <div class="contact-channels">
+              <a class="channel" href={mail}>
+                <span class="ch-ico"><svg viewBox="0 0 24 24"><path d="M3 6h18v12H3z"/><path d="M3 7l9 6 9-6"/></svg></span>
+                <span><small>Email</small><b>{profile.email}</b></span>
+              </a>
+              <a class="channel" href={li} target="_blank" rel="noreferrer noopener">
+                <span class="ch-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 11v5M8 8v.01M12 16v-5M16 16v-3a2 2 0 0 0-4 0"/></svg></span>
+                <span><small>LinkedIn</small><b>in/brandomled</b></span>
+              </a>
+              <a class="channel" href={gh} target="_blank" rel="noreferrer noopener">
+                <span class="ch-ico"><svg viewBox="0 0 24 24"><path d="M7 5C4 6 3 8 3 11v8h5v-3h8v3h5v-8c0-3-1-5-4-6l-1 2h-8z"/></svg></span>
+                <span><small>GitHub</small><b>@Zurybr</b></span>
+              </a>
+              <div class="channel" style="cursor:default;">
+                <span class="ch-ico"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                <span><small>{t('ed.cardLocT')}</small><b>{lang === 'es' ? 'Ciudad de México' : 'Mexico City'}</b></span>
+              </div>
+            </div>
+          </div>
+          <div class="quote-card" data-reveal="scale">
+            <h3>{t('section.contact.subtitle')}</h3>
+            <p class="qsub">{t('section.contact.text')}</p>
+            <div class="trail" style="margin-top:0;">
+              <a class="inline-link" href={mailtoHire} style="text-transform:none;letter-spacing:0.4px;font-size:13px;">{chipHire}
+                <svg viewBox="0 0 24 24"><path d="M5 19L19 5M19 5H8M19 5v11"/></svg>
+              </a>
+              <a class="inline-link" href={mailtoHire} style="text-transform:none;letter-spacing:0.4px;font-size:13px;">{chipCollab}
+                <svg viewBox="0 0 24 24"><path d="M5 19L19 5M19 5H8M19 5v11"/></svg>
+              </a>
+              <a class="inline-link" href={mailtoHire} style="text-transform:none;letter-spacing:0.4px;font-size:13px;">{chipOther}
+                <svg viewBox="0 0 24 24"><path d="M5 19L19 5M19 5H8M19 5v11"/></svg>
+              </a>
+            </div>
+            <div class="tmux-status" style="margin-top:26px;">
+              <span>{t('ed.cardRspT')}</span>
+              <span>{t('ed.cardRspD')}</span>
+            </div>
+            <div class="tmux-status">
+              <span>{t('ed.cardLangT')}</span>
+              <span>{t('ed.cardLangD')}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>

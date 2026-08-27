@@ -1,7 +1,6 @@
 ---
 import Header from '@/components/layout/header.astro'
 import Footer from '@/components/layout/footer.astro'
-import FluidBackground from '@/components/fluid-background.astro'
 import VisitorTracker from '@/components/visitor-tracker.astro'
 import socialLinksData from '@/content/social-links.json'
 import type { SocialLink } from '@/types'
@@ -19,8 +18,8 @@ interface Props {
 }
 
 const {
-  title = 'Brandom Ledesma — Portfolio',
-  description = 'Portfolio and blog of Brandom Ledesma, Principal AI Engineer & Software Architect.',
+  title = 'Brandom Ledesma — Software & AI Systems Engineer',
+  description = 'Curriculum vitae of Brandom Ledesma: software architect and AI systems engineer. Multi-agent architectures, event-driven platforms and full-stack software in production.',
   ogType = 'website',
   ogPublishedTime,
   lang,
@@ -53,6 +52,7 @@ const alternates = hasLocaleRoute
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="author" content="Brandom Rafael Ledesma Muñoz" />
     <link rel="canonical" href={canonicalUrl.href} />
     {
       alternates.map((alt) => (
@@ -67,8 +67,7 @@ const alternates = hasLocaleRoute
     <link rel="sitemap" href={publicAsset('/sitemap-index.xml')} />
     <link rel="icon" type="image/png" href={publicAsset('/images/profile.png')} />
     <link rel="apple-touch-icon" href={publicAsset('/images/profile.png')} />
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0a0a" />
+    <meta name="theme-color" content="#232C33" />
     <meta property="og:site_name" content="Brandom Ledesma" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -92,52 +91,113 @@ const alternates = hasLocaleRoute
       )
     }
   </head>
-  <body class="min-h-screen flex flex-col">
-    <a href="#main" class="skip-link">{t('nav.skip')}</a>
-    <div class="ambient-glow" aria-hidden="true"></div>
-    <FluidBackground />
-    <Header />
-    <div class="flex-1">
-      <slot />
+  <body>
+    <canvas id="bg3d" aria-hidden="true"></canvas>
+    <div class="side-rail right" aria-hidden="true">
+      <span class="rail-text" set:html={t('ed.railRight')} />
     </div>
-    <Footer socialLinks={socialLinks} />
+    <div class="side-rail left" aria-hidden="true">
+      <span class="rail-text" set:html={t('ed.railLeft')} />
+    </div>
+    <a href="#main" class="skip-link">{t('nav.skip')}</a>
+    <div class="shell">
+      <Header />
+      <div class="flex-1">
+        <slot />
+      </div>
+      <Footer socialLinks={socialLinks} />
+    </div>
     <VisitorTracker />
     <script>
+      // Reveal-on-scroll: flips data-revealed as sections enter the viewport
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
-              entry.target.classList.add('is-visible')
+              entry.target.setAttribute('data-revealed', 'true')
+              // Safety net: guarantee final state even if CSS transitions freeze
+              window.setTimeout(() => {
+                const el = entry.target as HTMLElement
+                el.style.opacity = '1'
+                el.style.transform = 'none'
+              }, 950)
               observer.unobserve(entry.target)
             }
           })
         },
-        { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+        { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
       )
-
-      document.querySelectorAll('[data-animate], [data-stagger]').forEach((el) => {
-        observer.observe(el)
-      })
+      document.querySelectorAll('[data-reveal]').forEach((el) => observer.observe(el))
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.querySelectorAll('[data-reveal]').forEach((el) => el.setAttribute('data-revealed', 'true'))
+      }
     </script>
-    <script is:inline>
+    <script>
+      // 3D backdrop: sparse dust constellation in perspective, pure canvas 2D
       ;(function () {
-        const heroWrapper = document.getElementById('hero-avatar-wrapper')
-        const navAvatar = document.getElementById('nav-avatar')
-        if (!heroWrapper || !navAvatar) return
-
-        const scrollObserver = new IntersectionObserver(
-          function ([entry]) {
-            const inNav = !entry.isIntersecting
-            navAvatar.classList.toggle('is-visible', inNav)
-            heroWrapper.classList.toggle('is-in-nav', inNav)
-          },
-          {
-            threshold: 0,
-            rootMargin: '-80px 0px 0px 0px',
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+        const canvas = document.getElementById('bg3d') as HTMLCanvasElement | null
+        if (!canvas) return
+        const ctx = canvas.getContext('2d')
+        if (!ctx) return
+        const dpr = Math.min(window.devicePixelRatio || 1, 2)
+        let W = 0, H = 0
+        const mouse = { x: 0, y: 0 }
+        const reduceTransparency = window.matchMedia('(prefers-reduced-transparency: reduce)').matches
+        const COUNT = reduceTransparency ? 0 : 80
+        const COLORS = ['255,255,255', '185,199,206', '120,150,165']
+        const pts: { x: number; y: number; z: number; r: number; glow: boolean; c: string; a: number }[] = []
+        for (let i = 0; i < COUNT; i++) {
+          const glow = Math.random() < 0.14
+          pts.push({
+            x: (Math.random() - 0.5) * 2,
+            y: (Math.random() - 0.5) * 2,
+            z: Math.random() * 2 - 1,
+            r: 0.6 + Math.random() * 1.8,
+            glow,
+            c: COLORS[Math.floor(Math.random() * COLORS.length)],
+            a: glow ? 0.05 + Math.random() * 0.04 : 0.08 + Math.random() * 0.1,
+          })
+        }
+        function resize() {
+          W = window.innerWidth
+          H = window.innerHeight
+          canvas!.width = W * dpr
+          canvas!.height = H * dpr
+          canvas!.style.width = W + 'px'
+          canvas!.style.height = H + 'px'
+          ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
+        }
+        function frame(t: number) {
+          const time = t * 0.00006
+          ctx!.clearRect(0, 0, W, H)
+          const fov = Math.min(W, H) * 0.9
+          const cx = W / 2 + mouse.x * 14
+          const cy = H / 2 + mouse.y * 10
+          for (const p of pts) {
+            const ang = time + p.x * 2.1
+            const x = p.x * Math.cos(ang) - p.z * Math.sin(ang)
+            const z = p.x * Math.sin(ang) + p.z * Math.cos(ang) + 2.6
+            const y = p.y + Math.sin(time * 1.7 + p.z * 3) * 0.06
+            const s = fov / z
+            const px = cx + x * s
+            const py = cy + y * s
+            if (px < -140 || px > W + 140 || py < -140 || py > H + 140) continue
+            const rad = Math.min(p.r * (p.glow ? 46 : 2.4) * (2.6 / z), p.glow ? 120 : 4.5)
+            ctx!.beginPath()
+            ctx!.arc(px, py, rad, 0, Math.PI * 2)
+            ctx!.fillStyle = 'rgba(' + p.c + ',' + p.a + ')'
+            ctx!.fill()
           }
-        )
-
-        scrollObserver.observe(heroWrapper)
+          requestAnimationFrame(frame)
+        }
+        window.addEventListener('resize', resize)
+        window.addEventListener('mousemove', (e) => {
+          mouse.x = (e.clientX / W - 0.5) * 2
+          mouse.y = (e.clientY / H - 0.5) * 2
+        }, { passive: true })
+        resize()
+        requestAnimationFrame(frame)
       })()
     </script>
   </body>

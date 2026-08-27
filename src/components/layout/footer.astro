@@ -1,30 +1,71 @@
 ---
-import IconLink from '@/components/ui/icon-link.astro'
 import type { SocialLink } from '@/types'
+import type { Lang } from '@/i18n/ui'
+import { getLangFromUrl, useTranslations } from '@/i18n/utils'
 
 interface Props {
   socialLinks: SocialLink[]
 }
 
 const { socialLinks } = Astro.props
+const lang: Lang = getLangFromUrl(Astro.url)
+const t = useTranslations(lang)
+const gh = socialLinks.find((l) => l.icon === 'github')?.url || '#'
+const li = socialLinks.find((l) => l.icon === 'linkedin')?.url || '#'
+const mail = socialLinks.find((l) => l.icon === 'mail')?.url || '#'
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
+const homeHash = (h: string) => `${base}/${lang}/${h}`
 ---
 
-<footer class="border-t border-border bg-muted py-8">
-  <div
-    class="mx-auto flex max-w-5xl flex-col items-center gap-4 px-4 sm:flex-row sm:justify-between"
-  >
-    <p class="text-sm text-muted-foreground">&copy; 2026 Brandom Ledesma</p>
-    <div class="flex gap-4">
-      {
-        socialLinks.map((link) => (
-          <IconLink
-            href={link.url}
-            icon={link.icon}
-            label={link.platform}
-            external={link.icon !== 'mail'}
-          />
-        ))
-      }
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href={homeHash('#top')} class="brand">
+          <span class="mark">B<i>&amp;</i>L</span>
+          <span class="name">Brandom Ledesma</span>
+        </a>
+        <p style="margin-top:18px;">
+          Software architect &amp; AI systems engineer. Multi-agent architectures, event-driven
+          platforms and the interface layer where humans and models meet.
+        </p>
+        <div class="channels">
+          <a href={mail}>brandom2ledesma@gmail.com</a>
+          <a href={gh} target="_blank" rel="noreferrer noopener">github.com/Zurybr</a>
+          <a href={li} target="_blank" rel="noreferrer noopener">linkedin.com/in/brandomled</a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h5>{t('ed.footNav')}</h5>
+        <ul>
+          <li><a href={homeHash('#perfil')}>{t('section.about')}</a></li>
+          <li><a href={homeHash('#proyectos')}>{t('section.projects')}</a></li>
+          <li><a href={homeHash('#experiencia')}>{t('section.experience')}</a></li>
+          <li><a href={homeHash('#formacion')}>{t('section.education')}</a></li>
+          <li><a href={homeHash('#stack')}>{t('section.skills')}</a></li>
+          <li><a href={homeHash('#contacto')}>{t('section.contact')}</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>{t('ed.footRes')}</h5>
+        <ul>
+          <li><a href={`${base}/${lang}/blog/`}>Blog</a></li>
+          <li><a href={`${base}/${lang}/news/`}>News</a></li>
+          <li><a href={gh} target="_blank" rel="noreferrer noopener">GitHub</a></li>
+          <li><a href={homeHash('#contacto')}>{t('section.contact')}</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span><span class="pulse"></span> ● <b style="color:var(--ink);">Brandom Ledesma</b> · CDMX, MX · 2026 / Vol. 01</span>
+      <span class="right">
+        <span set:html={t('ed.copyright')} />
+        <span>19.4326° N · 99.1332° W</span>
+        <span style="color:var(--coral);">♥ MMXXVI</span>
+      </span>
+    </div>
+    <div class="foot-mega">
+      <div class="word" data-reveal="rise-lg">{t('ed.footCta')} <em>{t('ed.footCtaEm')}</em>.</div>
     </div>
   </div>
 </footer>
