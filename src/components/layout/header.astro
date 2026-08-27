@@ -19,7 +19,7 @@ const at = (hash: string) => (Astro.url.pathname.replace(new RegExp(`^${base}`),
     </div>
     <div class="brand-band-note">
       <span>Inicio &nbsp;·&nbsp; Brandom Ledesma / 2026 / Vol. 01</span>
-      <span>001 / 007</span>
+      <span>VOL. 01 · CV</span>
     </div>
   </div>
 </div>
@@ -44,7 +44,7 @@ const at = (hash: string) => (Astro.url.pathname.replace(new RegExp(`^${base}`),
         <li><a href={at('#perfil')}><span class="num">02</span>{t('section.about')}</a></li>
         <li><a href={at('#proyectos')}><span class="num">03</span>{t('section.projects')}</a></li>
         <li><a href={at('#experiencia')}><span class="num">04</span>{t('section.experience')}</a></li>
-        <li><a href={at('#formacion')}><span class="num">05</span>{t('section.education')}</a></li>
+        <li><a href={`${base}/${lang}/formacion/`}><span class="num">05</span>{t('section.education')}</a></li>
         <li><a href={at('#stack')}><span class="num">06</span>{t('section.skills')}</a></li>
         <li><a href={at('#contacto')}><span class="num">07</span>{t('section.contact')}</a></li>
       </ul>

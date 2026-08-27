@@ -6,7 +6,6 @@ import { localizeText } from '@/types'
 
 import profileData from '@/content/profile.json'
 import experienceData from '@/content/experience.json'
-import educationData from '@/content/education.json'
 import skillsData from '@/content/skills.json'
 import projectsData from '@/content/projects.json'
 import socialLinksData from '@/content/social-links.json'
@@ -14,7 +13,6 @@ import socialLinksData from '@/content/social-links.json'
 import type {
   Profile,
   Experience,
-  Education,
   SkillGroup,
   Project,
   SocialLink,
@@ -29,7 +27,6 @@ const t = useTranslations(lang)
 
 const profile = profileData as Profile
 const experience = experienceData as Experience[]
-const education = educationData as Education[]
 const skills = skillsData as SkillGroup[]
 const projects = projectsData as Project[]
 const socialLinks = socialLinksData as SocialLink[]
@@ -104,7 +101,7 @@ const jsonLd = {
             <span class="rule-sub">BL / 2026 &nbsp;·&nbsp; <span set:html={t('ed.docMeta')} /></span>
             <span class="rule-kick" set:html={t('ed.heroKick')} />
           </span>
-          <span>001 / 007</span>
+          <span>001 / 006</span>
         </div>
       </div>
       <div class="container hero-grid">
@@ -238,7 +235,7 @@ const jsonLd = {
             <span class="dot-mark">•</span>
             <span>BL / <span set:html={t('ed.docMeta')} /></span>
           </span>
-          <span>002 / 007</span>
+          <span>002 / 006</span>
         </div>
         <div class="about-grid">
           <div class="about-copy" data-reveal>
@@ -353,7 +350,7 @@ const jsonLd = {
             <span class="dot-mark">•</span>
             <span>{lang === 'es' ? 'Del repo al usuario' : 'From repo to user'}</span>
           </span>
-          <span>003 / 007</span>
+          <span>003 / 006</span>
         </div>
         <div data-reveal style="margin-bottom:44px;">
           <span class="label" set:html={t('ed.projectsLabel')} />
@@ -397,7 +394,7 @@ const jsonLd = {
             <span class="dot-mark">•</span>
             <span>2020 — {lang === 'es' ? 'presente' : 'present'}</span>
           </span>
-          <span>004 / 007</span>
+          <span>004 / 006</span>
         </div>
         <div data-reveal style="margin-bottom:30px;">
           <span class="label" set:html={t('ed.expLabel')} />
@@ -423,48 +420,17 @@ const jsonLd = {
       </div>
     </section>
 
-    <!-- ============ V. EDUCATION ============ -->
-    <section class="sec" id="formacion">
-      <div class="container">
-        <div class="sec-rule">
-          <span class="roman">V.</span>
-          <span class="meta-grp">
-            <span>{t('ed.eduSection')}</span>
-            <span class="dot-mark">•</span>
-            <span>IPN · UPVM</span>
-          </span>
-          <span>005 / 007</span>
-        </div>
-        <div data-reveal style="margin-bottom:44px;">
-          <span class="label" set:html={t('ed.eduLabel')} />
-          <h2 class="display" set:html={t('ed.eduHead')} />
-        </div>
-        <div class="edu-grid">
-          {education.map((ed) => (
-            <div class="edu-card" data-reveal>
-              <span class="corner tl"></span>
-              <span class="corner br"></span>
-              <h3>{ed.institution}</h3>
-              <p class="degree">{localizeText(ed.degree, lang)}</p>
-              <p>{localizeText(ed.description, lang)}</p>
-              <span class="xp-when">{localizeText(ed.period, lang)}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-
     <!-- ============ VI. SKILLS ============ -->
     <section class="sec" id="stack">
       <div class="container">
         <div class="sec-rule">
-          <span class="roman">VI.</span>
+          <span class="roman">V.</span>
           <span class="meta-grp">
             <span>{t('ed.skillsSection')}</span>
             <span class="dot-mark">•</span>
             <span>{flatSkills.length}+ {lang === 'es' ? 'herramientas' : 'tools'}</span>
           </span>
-          <span>006 / 007</span>
+          <span>005 / 006</span>
         </div>
         <div data-reveal style="margin-bottom:44px;">
           <span class="label" set:html={t('ed.skillsLabel')} />
@@ -474,7 +440,7 @@ const jsonLd = {
           {skills.map((group, i) => (
             <div class="skill-group" data-reveal>
               <div class="pillar-rule">
-                <span class="roman">VI.{String.fromCharCode(97 + i)}</span>
+                <span class="roman">V.{String.fromCharCode(97 + i)}</span>
                 <span>{localizeText(group.category, lang)}</span>
                 <span>{group.items.length}</span>
               </div>
@@ -491,13 +457,13 @@ const jsonLd = {
     <section class="sec" id="contacto">
       <div class="container">
         <div class="sec-rule">
-          <span class="roman">VII.</span>
+          <span class="roman">VI.</span>
           <span class="meta-grp">
             <span>{t('ed.contactSection')}</span>
             <span class="dot-mark">•</span>
             <span>BL / 2026</span>
           </span>
-          <span>007 / 007</span>
+          <span>006 / 006</span>
         </div>
         <div class="work-grid contact">
           <div class="work-copy" data-reveal>

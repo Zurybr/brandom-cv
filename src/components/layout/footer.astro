@@ -41,7 +41,7 @@ const homeHash = (h: string) => `${base}/${lang}/${h}`
           <li><a href={homeHash('#perfil')}>{t('section.about')}</a></li>
           <li><a href={homeHash('#proyectos')}>{t('section.projects')}</a></li>
           <li><a href={homeHash('#experiencia')}>{t('section.experience')}</a></li>
-          <li><a href={homeHash('#formacion')}>{t('section.education')}</a></li>
+          <li><a href={`${base}/${lang}/formacion/`}>{t('section.education')}</a></li>
           <li><a href={homeHash('#stack')}>{t('section.skills')}</a></li>
           <li><a href={homeHash('#contacto')}>{t('section.contact')}</a></li>
         </ul>

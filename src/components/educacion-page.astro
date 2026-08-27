@@ -1,0 +1,75 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import type { Lang } from '@/i18n/ui'
+import { useTranslations, publicAsset } from '@/i18n/utils'
+import { localizeText } from '@/types'
+
+import educationData from '@/content/education.json'
+import type { Education } from '@/types'
+
+interface Props {
+  lang: Lang
+}
+
+const { lang } = Astro.props
+const t = useTranslations(lang)
+const education = educationData as Education[]
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  name: `${lang === 'es' ? 'Formación' : 'Education'} — Brandom Ledesma`,
+  url: new URL(Astro.url.pathname, Astro.site).href,
+}
+---
+
+<Layout
+  title={lang === 'es'
+    ? 'Formación — Brandom Ledesma'
+    : 'Education — Brandom Ledesma'}
+  description={lang === 'es'
+    ? 'Formación académica de Brandom Ledesma: Ingeniería en Nanotecnología (UPVM) e investigación en el IPN — Centro de Nanociencias y Micro y Nanotecnologías.'
+    : 'Brandom Ledesma\u2019s academic background: B.S. in Nanotechnology Engineering (UPVM) and research at IPN — Center for Nanosciences and Micro/Nanotechnologies.'}
+  lang={lang}
+  jsonLd={jsonLd}
+>
+  <main id="main">
+    <section class="sec" id="formacion">
+      <div class="container">
+        <div class="sec-rule">
+          <span class="roman">{lang === 'es' ? 'Anexo' : 'Annex'}</span>
+          <span class="meta-grp">
+            <span>{t('ed.eduSection')}</span>
+            <span class="dot-mark">•</span>
+            <span>IPN · UPVM</span>
+          </span>
+          <span>{lang === 'es' ? 'ANEXO / ANEXOS' : 'ANNEX 01'}</span>
+        </div>
+        <div data-reveal style="margin-bottom:44px;">
+          <span class="label" set:html={t('ed.eduLabel')} />
+          <h2 class="display" set:html={t('ed.eduHead')} />
+          <p class="lead" style="margin-top:24px;">
+            {lang === 'es'
+              ? 'La base científica detrás de los sistemas: nanotecnología e investigación formal antes de la ingeniería de software.'
+              : 'The scientific foundation behind the systems: nanotechnology and formal research before software engineering.'}
+          </p>
+          <a class="btn btn-ghost" style="margin-top:26px;" href={lang === 'es' ? '/brandom-cv/es/' : '/brandom-cv/en/'}>
+            ← {lang === 'es' ? 'Volver al CV' : 'Back to CV'}
+          </a>
+        </div>
+        <div class="edu-grid">
+          {education.map((ed) => (
+            <div class="edu-card" data-reveal>
+              <span class="corner tl"></span>
+              <span class="corner br"></span>
+              <h3>{ed.institution}</h3>
+              <p class="degree">{localizeText(ed.degree, lang)}</p>
+              <p>{localizeText(ed.description, lang)}</p>
+              <span class="xp-when">{localizeText(ed.period, lang)}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
