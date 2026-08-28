@@ -18,10 +18,32 @@
   },
   {
     "category": {
+      "en": "Systems Design",
+      "es": "Diseño de Sistemas"
+    },
+    "items": [
+      "Elicitation estructurada (5W1H)",
+      "Sistemas deterministas",
+      "Zonas congeladas vs. variables",
+      "Verificación por paso",
+      "Enmiendas versionadas",
+      "Bitácoras de corridas",
+      "Pruebas de determinismo",
+      "Nativización a skills"
+    ]
+  },
+  {
+    "category": {
       "en": "Languages",
       "es": "Lenguajes"
     },
-    "items": ["Python", "TypeScript", "C#", "JavaScript", "SQL"]
+    "items": [
+      "Python",
+      "TypeScript",
+      "C#",
+      "JavaScript",
+      "SQL"
+    ]
   },
   {
     "category": {
@@ -43,7 +65,12 @@
       "en": "Frontend",
       "es": "Frontend"
     },
-    "items": ["React", "Next.js", "Angular 17", "Tailwind CSS"]
+    "items": [
+      "React",
+      "Next.js",
+      "Angular 17",
+      "Tailwind CSS"
+    ]
   },
   {
     "category": {

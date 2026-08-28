@@ -420,6 +420,126 @@ const jsonLd = {
       </div>
     </section>
 
+    <!-- ============ V.bis SYSTEMS DESIGN ============ -->
+    <section class="sec" id="sistemas">
+      <div class="container">
+        <div class="sec-rule">
+          <span class="roman">V.</span>
+          <span class="meta-grp">
+            <span>{t('ed.sysSection')}</span>
+            <span class="dot-mark">•</span>
+            <span>{lang === 'es' ? 'idea → sistema replicable' : 'idea → replicable system'}</span>
+          </span>
+          <span>005 / 006</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1.05fr 0.95fr; gap:72px; align-items:start;" class="sys-grid">
+          <div data-reveal>
+            <span class="label" set:html={t('ed.sysLabel')} />
+            <h2 class="display" set:html={t('ed.sysHead')} />
+            <p class="lead" style="margin-top:24px;">{t('ed.sysLead')}</p>
+            <div class="cards" style="grid-template-columns:1fr; margin-top:34px; gap:16px;">
+              <div class="card" data-reveal>
+                <div class="num">01<span class="tag">{lang === 'es' ? 'Principio' : 'Principle'}</span></div>
+                <h3>{t('ed.sysC1T')}</h3>
+                <p>{t('ed.sysC1D')}</p>
+              </div>
+              <div class="card" data-reveal>
+                <div class="num">02<span class="tag">{lang === 'es' ? 'Principio' : 'Principle'}</span></div>
+                <h3>{t('ed.sysC2T')}</h3>
+                <p>{t('ed.sysC2D')}</p>
+              </div>
+              <div class="card" data-reveal>
+                <div class="num">03<span class="tag">{lang === 'es' ? 'Principio' : 'Principle'}</span></div>
+                <h3>{t('ed.sysC3T')}</h3>
+                <p>{t('ed.sysC3D')}</p>
+              </div>
+            </div>
+          </div>
+          <div data-reveal="right">
+            <div class="hero-art" style="padding:26px 22px 20px;">
+              <span class="corner tl"></span><span class="corner br"></span>
+              <span class="annot annot-tl coord">FIG. 02 / BL-26</span>
+              <span class="annot annot-tr">{lang === 'es' ? 'Placa Nº 02' : 'Plate Nº 02'}</span>
+              <svg class="hero-viz" viewBox="0 0 640 560" preserveAspectRatio="xMidYMid meet" role="img"
+                aria-label={lang === 'es' ? 'Diagrama: una idea pasa por elicitación, compilación, pruebas, nativización y enmiendas' : 'Diagram: an idea flows through elicitation, compilation, testing, nativization and amendments'}>
+                <text x="24" y="36" fill="#F4F7F9" font-family="Inter Tight, sans-serif" font-size="13" font-weight="800" letter-spacing="3">{lang === 'es' ? 'DE LA IDEA AL SISTEMA' : 'FROM IDEA TO SYSTEM'}</text>
+                <line x1="24" y1="48" x2="60" y2="48" stroke="rgba(248,250,252,.85)" stroke-width="2"/>
+                <!-- pipeline boxes -->
+                <g fill="rgba(9,57,80,.55)" stroke="rgba(248,250,252,.5)" stroke-width="1.5">
+                  <rect x="30" y="80" width="200" height="52" rx="10"/>
+                  <rect x="230" y="160" width="200" height="52" rx="10"/>
+                  <rect x="30" y="240" width="200" height="52" rx="10"/>
+                  <rect x="230" y="320" width="200" height="52" rx="10"/>
+                </g>
+                <g font-family="Inter Tight, sans-serif" text-anchor="middle">
+                  <text x="130" y="102" fill="#F4F7F9" font-size="12" font-weight="700" letter-spacing="1">1 · {lang === 'es' ? 'ELICITAR' : 'ELICIT'}</text>
+                  <text x="130" y="119" fill="rgba(248,250,252,.55)" font-size="9">{lang === 'es' ? 'preguntar, no asumir' : 'ask, do not assume'}</text>
+                  <text x="330" y="182" fill="#F4F7F9" font-size="12" font-weight="700" letter-spacing="1">2 · {lang === 'es' ? 'COMPILAR' : 'COMPILE'}</text>
+                  <text x="330" y="199" fill="rgba(248,250,252,.55)" font-size="9">{lang === 'es' ? 'pasos + verificación' : 'steps + verification'}</text>
+                  <text x="130" y="262" fill="#F4F7F9" font-size="12" font-weight="700" letter-spacing="1">3 · {lang === 'es' ? 'PROBAR' : 'TEST'}</text>
+                  <text x="130" y="279" fill="rgba(248,250,252,.55)" font-size="9">{lang === 'es' ? '2 corridas = mismo resultado' : '2 runs = same result'}</text>
+                  <text x="330" y="342" fill="#F4F7F9" font-size="12" font-weight="700" letter-spacing="1">4 · {lang === 'es' ? 'NATIVIZAR' : 'NATIVIZE'}</text>
+                  <text x="330" y="359" fill="rgba(248,250,252,.55)" font-size="9">{lang === 'es' ? 'se carga sola siempre' : 'always loaded by trigger'}</text>
+                </g>
+                <g stroke="rgba(248,250,252,.7)" stroke-width="2" fill="none">
+                  <path d="M130 132 L130 152 L226 178"/>
+                  <path d="M330 212 L330 232 L234 258"/>
+                  <path d="M130 292 L130 312 L226 338"/>
+                </g>
+                <!-- loop de enmiendas -->
+                <path d="M430 346 Q540 346 540 240 Q540 120 430 106" fill="none" stroke="rgba(127,209,168,.7)" stroke-width="2" stroke-dasharray="5 6"/>
+                <path d="M437 100 l-9 7 l11 4" fill="none" stroke="rgba(127,209,168,.7)" stroke-width="2"/>
+                <text x="565" y="230" fill="rgba(127,209,168,.9)" font-family="Inter Tight, sans-serif" font-size="10" font-weight="700" letter-spacing="1.5" transform="rotate(90 565 230)" text-anchor="middle">{lang === 'es' ? '5 · ENMIENDAS v1.1 v1.2…' : '5 · AMENDMENTS v1.1 v1.2…'}</text>
+                <!-- dominios -->
+                <g font-family="Inter Tight, sans-serif">
+                  <text x="30" y="430" fill="rgba(248,250,252,.9)" font-size="11" font-weight="700" letter-spacing="2">{lang === 'es' ? 'APLICA A:' : 'APPLIES TO:'}</text>
+                  <text x="30" y="452" fill="rgba(248,250,252,.55)" font-size="10">• {lang === 'es' ? 'Software y despliegues' : 'Software & deploys'}</text>
+                  <text x="30" y="470" fill="rgba(248,250,252,.55)" font-size="10">• {lang === 'es' ? 'Investigación e informes' : 'Research & reports'}</text>
+                  <text x="30" y="488" fill="rgba(248,250,252,.55)" font-size="10">• {lang === 'es' ? 'Marca y diseño' : 'Brand & design'}</text>
+                  <text x="30" y="506" fill="rgba(248,250,252,.55)" font-size="10">• {lang === 'es' ? 'Hábitos y operación (sin código)' : 'Habits & operations (no code)'}</text>
+                </g>
+                <!-- resultado -->
+                <rect x="330" y="440" width="220" height="44" rx="22" fill="#F4F7F9"/>
+                <text x="440" y="467" text-anchor="middle" fill="#093950" font-family="Inter Tight, sans-serif" font-size="12" font-weight="800" letter-spacing="1.5">{lang === 'es' ? '1M CORRIDAS = 1 RESULTADO' : '1M RUNS = 1 RESULT'}</text>
+              </svg>
+              <div class="index" style="border-top:1px solid var(--line-soft); margin-top:14px; padding-top:12px;">
+                <span class="on"><span class="n">§</span>{lang === 'es' ? 'método propio' : 'own method'}</span>
+                <span><span class="n">¶</span>{lang === 'es' ? '3 casos reales' : '3 real cases'}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pillar-rule" style="margin-top:70px;">
+          <span class="roman">V.a</span>
+          <span>{lang === 'es' ? 'Casos reales: el método en tres dominios' : 'Real cases: the method across three domains'}</span>
+          <span>V.a / V.c</span>
+        </div>
+        <div class="projects-grid">
+          <article class="work-card" data-reveal>
+            <div class="body">
+              <h3>{t('ed.sysCaseT1')}</h3>
+              <p>{t('ed.sysCaseD1')}</p>
+              <div class="tags"><span>astro</span><span>playwright</span><span>ci/cd</span></div>
+            </div>
+          </article>
+          <article class="work-card" data-reveal>
+            <div class="body">
+              <h3>{t('ed.sysCaseT2')}</h3>
+              <p>{t('ed.sysCaseD2')}</p>
+              <div class="tags"><span>design tokens</span><span>figma→code</span><span>seo</span></div>
+            </div>
+          </article>
+          <article class="work-card" data-reveal>
+            <div class="body">
+              <h3>{t('ed.sysCaseT3')}</h3>
+              <p>{t('ed.sysCaseD3')}</p>
+              <div class="tags"><span>elicitation</span><span>habits</span><span>zero-code</span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ VI. SKILLS ============ -->
     <section class="sec" id="stack">
       <div class="container">
